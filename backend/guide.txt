@@ -1,0 +1,21 @@
+After creating knexfile.js:
+
+Step 4: Create Initial Migration Script
+Create an initial migration script that first creates the database (if it does not exist) and then creates the necessary tables.
+
+    npx knex migrate:make initial_setup
+
+
+
+Step 5: Create Seed Script for Admin User
+Create a seed script to insert an admin user into the users table.
+
+    npx knex seed:make add_admin_user
+
+
+
+Step 6: Running Migrations and Seeds
+Run the migrations to create the database and tables, then run the seed to insert the admin user.
+
+    npx knex migrate:latest
+    npx knex seed:run
