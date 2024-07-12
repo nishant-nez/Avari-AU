@@ -5,7 +5,7 @@ exports.up = async function (knex) {
     await knex.schema.createTable('admins', table => {
         table.increments('id').primary();
         table.string('username', 100).notNullable().unique();
-        table.string('email', 100).unique().notNullable();
+        table.string('email', 100).unique();
         table.string('password').notNullable();
         // created_at, updated_at
         table.timestamps(true, true);

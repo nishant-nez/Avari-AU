@@ -25,7 +25,7 @@ db.migrate.latest()
 app.get('/', (req, res) => {
     res.send("Hello World");
 });
-app.use('/api/admin', require('./routes/adminRoute')); // left
+app.use('/api/admin', require('./routes/adminRoute'));
 app.use('/api/vendor', require('./routes/vendorRoute'));
 
 

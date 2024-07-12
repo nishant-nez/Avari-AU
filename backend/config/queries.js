@@ -6,12 +6,28 @@ const addVendor = "INSERT INTO vendors (name, email, password, location, state, 
 const updateVendor = "UPDATE vendors SET name = $1, email = $2, password = $3, location = $4, state = $5, country = $6, latitude = $7, longitude = $8, phone = $9 WHERE id = $10";
 const deleteVendor = "DELETE FROM vendors WHERE id = $1";
 
+// admin
+const getAdmins = "SELECT * FROM admins";
+const getAdminById = "SELECT * FROM admins WHERE id = $1";
+const checkAdminUsernameExists = "SELECT * FROM admins WHERE username = $1";
+const checkAdminEmailExists = "SELECT * FROM admins WHERE email = $1";
+const addAdmin = "INSERT INTO admins (username, email, password) VALUES ($1, $2, $3)";
+const updateAdmin = "UPDATE vendors SET username = $1, email = $2, password = $3 WHERE id = $4";
+
 
 module.exports = {
+    // vendors
     getVendors,
     getVendorById,
     checkVendorEmailExists,
     addVendor,
     updateVendor,
     deleteVendor,
+    // admin
+    getAdmins,
+    getAdminById,
+    checkAdminUsernameExists,
+    checkAdminEmailExists,
+    addAdmin,
+    updateAdmin,
 }
