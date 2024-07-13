@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 guide.txt
+
+/public/images/profile/*
+/public/images/products/*

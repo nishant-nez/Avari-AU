@@ -14,6 +14,7 @@ const port = process.env.PORT;
 // middlewares
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static('public'))
 
 // database migrations
 // Automatically run migrations on server start
@@ -27,6 +28,8 @@ app.get('/', (req, res) => {
 });
 app.use('/api/admin', require('./routes/adminRoute'));
 app.use('/api/vendor', require('./routes/vendorRoute'));
+app.use('/api/category', require('./routes/categoryRoute'));
+app.use('/api/product', require('./routes/productRoute'));
 
 
 app.listen(port, () => console.log(`App listening on port ${ port }`));

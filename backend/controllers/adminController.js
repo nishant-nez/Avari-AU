@@ -4,17 +4,23 @@ const pool = require("../config/db");
 const queries = require("../config/queries");
 
 
+const handleServerError = (res, error, message) => {
+    console.error(message, error);
+    res.status(500).json({ message: "Internal server error" });
+};
+
+
 //@desc Get All Admins 
 //@route GET /api/admin/all
 //@access private
 const getAdmins = (req, res) => {
     try {
         pool.query(queries.getAdmins, (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error getting admins!');
             res.status(200).json(results.rows);
         });
     } catch (error) {
-        console.error('Error getting admins:', error);
+        console.error('Error getting admins!', error);
         return res.status(500).json({ message: "Internal server error" });
     }
 }
@@ -26,7 +32,7 @@ const getAdmin = (req, res) => {
     try {
         const id = parseInt(req.params.id);
         pool.query(queries.getAdminById, [id], (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error getting admin!');
             if (results.rows.length) {
                 res.status(200).json(results.rows[0]);
             } else res.status(404).json({ message: "Admin not found!" });
@@ -48,14 +54,14 @@ const registerAdmin = async (req, res) => {
 
     try {
         pool.query(queries.checkAdminEmailExists, [email], async (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error registering admin!');
             if (results.rows.length) {
                 return res.status(400).json({ message: "Admin with provided email already exists!" });
             } else {
                 //Hashing the password
                 const hashedPassword = await bcrypt.hash(password, 10);
                 pool.query(queries.addAdmin, [username, email, hashedPassword], (error, results) => {
-                    if (error) throw error;
+                    if (error) return handleServerError(res, error, 'Error registering admin!');
                     return res.status(201).json({ message: "Admin registered successfully!" });
                 });
             }
@@ -114,7 +120,7 @@ const loginAdmin = async (req, res) => {
 };
 
 //@desc Update 
-//@route PUT /api/admin/update/:1
+//@route PUT /api/admin/update/:id
 //@access private
 const updateAdmin = async (req, res) => {
     const { username, email, password } = req.body;
@@ -124,19 +130,19 @@ const updateAdmin = async (req, res) => {
             return res.status(400).json({ message: "Admin ID is required!" });
         }
         pool.query(queries.getAdminById, [id], async (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error updating admin!');
             if (!results.rows.length) {
                 return res.status(400).json({ message: "Admin not found!" });
             } else {
                 if (password) {
                     const hashedPassword = await bcrypt.hash(password, 10);
                     pool.query(queries.updateAdmin, [username, email, hashedPassword, id], (error, results) => {
-                        if (error) throw error;
+                        if (error) return handleServerError(res, error, 'Error updating admin!');
                         return res.status(201).json({ message: "Admin updated successfully!" });
                     });
                 } else {
                     pool.query(queries.updateAdmin, [username, email, password, id], (error, results) => {
-                        if (error) throw error;
+                        if (error) return handleServerError(res, error, 'Error updating admin!');
                         return res.status(201).json({ message: "Admin updated successfully!" });
                     });
                 }

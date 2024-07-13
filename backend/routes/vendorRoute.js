@@ -1,7 +1,7 @@
 const express = require("express");
 const validateVendor = require("../middlewares/validateVendor");
 const validateAdmin = require('../middlewares/validateAdmin');
-const validateVendorOrAdmin = require("../middlewares/validateAdminOrVendor")
+const validateVendorOrAdmin = require("../middlewares/validateAdminOrVendor");
 const { getVendors, getVendor, registerVendor, loginVendor, updateVendor, deleteVendor } = require("../controllers/vendorController");
 
 const router = express.Router();

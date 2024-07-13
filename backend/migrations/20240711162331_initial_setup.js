@@ -37,9 +37,11 @@ exports.up = async function (knex) {
     await knex.schema.createTable('products', table => {
         table.increments('id').primary();
         table.string('name', 100).notNullable();
+        table.string('image').notNullable().defaultTo('images/products/default.jpg');
         table.integer('category_id').unsigned().notNullable().references('id').inTable('categories').onDelete('CASCADE');
         // precision and scale
         table.decimal('price', 10, 2).notNullable();
+        table.string('description').notNullable();
         table.enu('unit', ['pcs', 'kg']).notNullable();
         table.integer('vendor_id').unsigned().notNullable().references('id').inTable('vendors').onDelete('CASCADE');
         table.timestamps(true, true);

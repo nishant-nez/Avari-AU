@@ -4,13 +4,19 @@ const pool = require("../config/db");
 const queries = require("../config/queries");
 
 
+const handleServerError = (res, error, message) => {
+    console.error(message, error);
+    res.status(500).json({ message: "Internal server error" });
+};
+
+
 //@desc Get All Vendors 
 //@route GET /api/vendor/all
 //@access private
 const getVendors = (req, res) => {
     try {
         pool.query(queries.getVendors, (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error getting vendors!');
             res.status(200).json(results.rows);
         });
     } catch (error) {
@@ -26,7 +32,7 @@ const getVendor = (req, res) => {
     try {
         const id = parseInt(req.params.id);
         pool.query(queries.getVendorById, [id], (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error getting vendor!');
             if (results.rows.length) {
                 res.status(200).json(results.rows[0]);
             } else res.status(404).json({ message: "Vendor not found!" });
@@ -37,7 +43,7 @@ const getVendor = (req, res) => {
     }
 }
 
-//@desc Register 
+//@desc Register Vendor
 //@route POST /api/vendor/register
 //@access private
 const registerVendor = async (req, res) => {
@@ -48,14 +54,14 @@ const registerVendor = async (req, res) => {
 
     try {
         pool.query(queries.checkVendorEmailExists, [email], async (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error registering vendor!');
             if (results.rows.length) {
                 return res.status(400).json({ message: "Vendor with provided email already exists!" });
             } else {
                 //Hashing the password
                 const hashedPassword = await bcrypt.hash(password, 10);
                 pool.query(queries.addVendor, [name, email, hashedPassword, location, state, country, latitude, longitude, phone], (error, results) => {
-                    if (error) throw error;
+                    if (error) return handleServerError(res, error, 'Error registering vendor!');
                     return res.status(201).json({ message: "Vendor registered successfully!" });
                 });
             }
@@ -66,7 +72,7 @@ const registerVendor = async (req, res) => {
     }
 };
 
-//@desc Login 
+//@desc Login Vendor
 //@route POST /api/vendor/login
 //@access public
 const loginVendor = async (req, res) => {
@@ -112,7 +118,7 @@ const loginVendor = async (req, res) => {
     }
 };
 
-//@desc Update 
+//@desc Update Vendor
 //@route PUT /api/vendor/update/:1
 //@access private
 const updateVendor = async (req, res) => {
@@ -123,19 +129,19 @@ const updateVendor = async (req, res) => {
             return res.status(400).json({ message: "Vendor ID is required!" });
         }
         pool.query(queries.getVendorById, [id], async (error, results) => {
-            if (error) throw error;
+            if (error) return handleServerError(res, error, 'Error updating vendor!');
             if (!results.rows.length) {
                 return res.status(400).json({ message: "Vendor not found!" });
             } else {
                 if (password) {
                     const hashedPassword = await bcrypt.hash(password, 10);
                     pool.query(queries.updateVendor, [name, email, hashedPassword, location, state, country, latitude, longitude, phone, id], (error, results) => {
-                        if (error) throw error;
+                        if (error) return handleServerError(res, error, 'Error updating vendor!');
                         return res.status(201).json({ message: "Vendor updated successfully!" });
                     });
                 } else {
                     pool.query(queries.updateVendor, [name, email, password, location, state, country, latitude, longitude, phone, id], (error, results) => {
-                        if (error) throw error;
+                        if (error) return handleServerError(res, error, 'Error updating vendor!');
                         return res.status(201).json({ message: "Vendor updated successfully!" });
                     });
                 }
@@ -147,7 +153,7 @@ const updateVendor = async (req, res) => {
     }
 };
 
-//@desc Delete 
+//@desc Delete Vendor
 //@route DELETE /api/vendor/delete/:1
 //@access private
 const deleteVendor = async (req, res) => {
@@ -157,7 +163,7 @@ const deleteVendor = async (req, res) => {
     }
 
     try {
-        const result = await pool.query("DELETE FROM vendors WHERE id = $1", [id]);
+        const result = await pool.query(queries.deleteVendor, [id]);
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Vendor not found!" });
         }
