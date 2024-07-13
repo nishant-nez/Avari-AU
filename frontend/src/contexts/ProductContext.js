@@ -6,16 +6,17 @@ export const ProductContext = createContext();
 const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await axios.get('/api/product/all', { withCredentials: true });
-      setProducts(response.data);
-    };
+  const fetchProducts = async () => {
+    const response = await axios.get('/api/product/all', { withCredentials: true });
+    setProducts(response.data);
+  };
 
+  useEffect(() => {
     fetchProducts();
   }, []);
 
-  return <ProductContext.Provider value={ { products } }>{ children }</ProductContext.Provider>
+
+  return <ProductContext.Provider value={ { products, fetchProducts } }>{ children }</ProductContext.Provider>
 };
 
 export default ProductProvider;
