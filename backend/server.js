@@ -2,10 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const knex = require('knex');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const knexConfig = require('./knexfile');
 const environment = process.env.NODE_ENV || 'development';
 const db = knex(knexConfig[environment]);
+
+const corsOptions = {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+    optionsSuccessStatus: 200,
+}
 
 const app = express();
 
@@ -14,7 +21,8 @@ const port = process.env.PORT;
 // middlewares
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('public'))
+app.use(express.static('public'));
+app.use(cors(corsOptions));
 
 // database migrations
 // Automatically run migrations on server start
