@@ -61,6 +61,24 @@ const getProductsByCategory = (req, res) => {
     }
 }
 
+//@desc Get Product by Category ID 
+//@route GET /api/product/vendor/:id
+//@access private
+const getProductsByVendor = (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        pool.query(queries.getProductsByVendor, [id], (error, results) => {
+            if (error) return handleServerError(res, error, 'Error getting products!');
+            if (results.rows.length) {
+                res.status(200).json(results.rows[0]);
+            } else res.status(404).json({ message: "Product not found!" });
+        });
+    } catch (error) {
+        console.error('Error getting product:', error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+}
+
 //@desc Add Product 
 //@route POST /api/product/add
 //@access private
@@ -171,4 +189,4 @@ const deleteProduct = async (req, res) => {
 };
 
 
-module.exports = { getProducts, getProduct, getProductsByCategory, addProduct, updateProduct, updateProductImage, deleteProduct };
+module.exports = { getProducts, getProduct, getProductsByCategory, getProductsByVendor, addProduct, updateProduct, updateProductImage, deleteProduct };
