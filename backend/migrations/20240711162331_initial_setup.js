@@ -46,6 +46,13 @@ exports.up = async function (knex) {
         table.integer('vendor_id').unsigned().notNullable().references('id').inTable('vendors').onDelete('CASCADE');
         table.timestamps(true, true);
     });
+
+    // Create minimum_order table
+    await knex.schema.createTable('minimum_order', table => {
+        table.increments('id').primary();
+        table.decimal('value', 10, 2).notNullable().defaultTo(600.00);
+        table.timestamps(true, true);
+    });
 };
 
 exports.down = async function (knex) {
@@ -60,4 +67,7 @@ exports.down = async function (knex) {
 
     // Drop admin table
     await knex.schema.dropTableIfExists('admins');
+
+    // Drop minimum_order table
+    await knex.schema.dropTableIfExists('minimum_order');
 }; 

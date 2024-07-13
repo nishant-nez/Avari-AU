@@ -158,6 +158,10 @@ const updateProduct = "UPDATE products SET name = $1, category_id = $2, price = 
 const updateProductImage = "UPDATE products SET image = $1 WHERE id = $2"
 const deleteProduct = "DELETE FROM products WHERE id = $1";
 
+// minimum_order
+const getMinimumOrder = "SELECT * FROM minimum_order";
+const updateMinimumOrder = "UPDATE minimum_order set value = $1 WHERE id = $1"
+
 
 module.exports = {
     // vendors
@@ -189,4 +193,7 @@ module.exports = {
     updateProduct,
     updateProductImage,
     deleteProduct,
+    // minimum_order
+    getMinimumOrder,
+    updateMinimumOrder,
 }
