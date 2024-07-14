@@ -7,8 +7,9 @@ import ProductDetails from './pages/ProductDetails';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import Cart from './pages/Cart';
-import AdminLogin from './pages/AdminLogin';
+import AdminLogin from './pages/admin/AdminLogin';
 import Vendors from './pages/Vendors';
+import Products from './pages/admin/Products';
 
 const App = () => {
   return <div className='overflow-hidden'>
@@ -20,6 +21,7 @@ const App = () => {
 
         <Route path='/admin/login' element={ <AdminLogin /> } />
         <Route path='/admin/vendors' element={ <Vendors /> } />
+        <Route path='/admin/products' element={ <Products /> } />
       </Routes>
       <Sidebar />
       <Footer />

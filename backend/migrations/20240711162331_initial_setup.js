@@ -20,6 +20,7 @@ exports.up = async function (knex) {
         table.string('location').notNullable();
         table.string('state').notNullable();
         table.string('country').notNullable();
+        table.string('image').notNullable().defaultTo('images/profile/default.jpg');
         table.decimal('latitude', 9, 6);
         table.decimal('longitude', 9, 6);
         table.string('phone', 15).notNullable();

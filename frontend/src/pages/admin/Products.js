@@ -1,35 +1,34 @@
-import { useEffect, useState } from "react";
-import AdminNav from "../components/AdminNav";
-import axios from "../api/axios";
-import { Toast } from "../components/Toast";
+import { useContext, useEffect, useState } from "react";
+import AdminNav from "../../components/AdminNav";
+import axios from "../../api/axios";
+import { Toast } from "../../components/Toast";
 import Modal from 'react-modal';
 import * as Yup from "yup";
-import VendorRow from "../components/VendorRow";
-import VendorAddForm from "../components/VendorAddForm";
-import VendorUpdateForm from "../components/VendorUpdateForm";
+import ProductRow from "../../components/ProductRow";
+import ProductAddForm from "../../components/ProductAddForm";
+import ProductUpdateForm from "../../components/ProductUpdateForm";
+import { ProductContext } from "../../contexts/ProductContext";
+import { CategoryContext } from "../../contexts/CategoryContext";
 
 // formik
-const vendorSchema = Yup.object().shape({
+const productSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
-    email: Yup.string().email().required("Email is required"),
-    password: Yup.string().required("Password is required"),
-    location: Yup.string().required("Location is required"),
-    state: Yup.string().required("State is required"),
-    country: Yup.string().required("Country is required"),
-    latitude: Yup.number(),
-    longitude: Yup.number(),
-    phone: Yup.number().required("Phone number is required"),
+    price: Yup.number().required("Price is required"),
+    unit: Yup.string().required("Unit is required"),
+    image: Yup.mixed().required("Image is required"),
+    description: Yup.string().required("Description is required"),
+    category_id: Yup.number().required("Category id is required"),
 });
 
 const columns = [
     { name: "ID" },
     { name: "Name" },
-    { name: "Email" },
-    { name: "Phone" },
-    { name: "Address" },
-    { name: "State/Country" },
-    { name: "Coordinates" },
+    { name: "Description" },
+    { name: "Price" },
+    { name: "Unit" },
+    { name: "Category" },
     { name: "Created At" },
+    { name: "Vendor" },
     { name: "Action" },
 ];
 
@@ -54,44 +53,28 @@ const deleteStyles = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
-        // width: '60%',
-        // height: '70%',
     },
 };
 
 Modal.setAppElement('#root');
 
-const Vendors = () => {
-    const [vendors, setVendors] = useState([]);
-    const [selectedVendor, setSelectedVendor] = useState({});
-    const [selectedDelVendor, setSelectedDelVendor] = useState({});
-
-    const fetchVendors = async () => {
-        try {
-            const response = await axios.get('/api/vendor/all', { withCredentials: true });
-            if (response.statusText === 'OK') {
-                setVendors(response.data);
-            }
-        } catch (err) {
-            Toast('error', err);
-        }
-    };
-
-    useEffect(() => {
-        fetchVendors();
-    }, []);
+const Products = () => {
+    const { categories } = useContext(CategoryContext);
+    const { products, fetchProducts } = useContext(ProductContext);
+    const [selectedProduct, setSelectedProduct] = useState({});
+    const [selectedDelProduct, setSelectedDelProduct] = useState({});
 
 
     const handleDelete = (id) => {
         openDeleteModal(id);
     }
 
-    const handleDeleteVendor = async () => {
+    const handleDeleteProduct = async () => {
         try {
-            const response = await axios.delete(`/api/vendor/delete/${ selectedDelVendor.id }`, { withCredentials: true });
+            const response = await axios.delete(`/api/product/delete/${ selectedDelProduct.id }`, { withCredentials: true });
             if (response.statusText === 'OK') {
-                Toast('success', 'Vendor Deleted Successfully');
-                fetchVendors();
+                Toast('success', 'Product Deleted Successfully');
+                fetchProducts();
                 closeDeleteModal();
             } else {
                 Toast('error', 'Something went wrong');
@@ -121,8 +104,8 @@ const Vendors = () => {
     const [updateModalIsOpen, setUpdateIsOpen] = useState(false);
 
     function openUpdateModal(id) {
-        const selVendor = vendors.find((vendor) => vendor.id === id);
-        setSelectedVendor(selVendor);
+        const selProduct = products.find((product) => product.id === id);
+        setSelectedProduct(selProduct);
         setUpdateIsOpen(true);
     }
     function afterUpdateOpenModal() {
@@ -138,8 +121,8 @@ const Vendors = () => {
     const [deleteModalIsOpen, setDeleteIsOpen] = useState(false);
 
     function openDeleteModal(id) {
-        const delVendor = vendors.find((vendor) => vendor.id === id);
-        setSelectedDelVendor(delVendor);
+        const delProduct = products.find((product) => product.id === id);
+        setSelectedDelProduct(delProduct);
         setDeleteIsOpen(true);
     }
     function closeDeleteModal() {
@@ -149,11 +132,12 @@ const Vendors = () => {
     return (
         <>
             <AdminNav />
+
             <div className="w-full h-full flex flex-col items-center justify-center">
                 <div className="container mx-auto flex pt-36 justify-between items-center px-6">
-                    <h1 className="text-xl font-semibold">Vendors</h1>
+                    <h1 className="text-xl font-semibold">Products</h1>
                     <div className='bg-primary flex p-3 w-[150px] rounded-lg justify-center items-center text-white font-medium cursor-pointer' onClick={ openModal }>
-                        Add Vendor
+                        Add Product
                     </div>
                 </div>
 
@@ -170,9 +154,9 @@ const Vendors = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white">
-                                    { vendors.map((vendor) => {
+                                    { products.map((product) => {
                                         return (
-                                            <VendorRow vendor={ vendor } openUpdateModal={ openUpdateModal } handleDelete={ handleDelete } key={ vendor.id } />
+                                            <ProductRow product={ product } openUpdateModal={ openUpdateModal } handleDelete={ handleDelete } key={ product.id } />
                                         );
                                     }) }
 
@@ -188,12 +172,11 @@ const Vendors = () => {
                     onAfterOpen={ afterOpenModal }
                     onRequestClose={ closeModal }
                     style={ customStyles }
-                    contentLabel="Add Vendor Modal"
+                    contentLabel="Add Product Modal"
                 >
                     <button onClick={ closeModal } className="text-right w-full pr-8">X</button>
-                    <h2 ref={ (_subtitle) => (subtitle = _subtitle) } className="text-center w-full">Add Vendor</h2>
-
-                    <VendorAddForm vendorSchema={ vendorSchema } closeModal={ closeModal } fetchVendors={ fetchVendors } />
+                    <h2 ref={ (_subtitle) => (subtitle = _subtitle) } className="text-center w-full">Add Product</h2>
+                    <ProductAddForm productSchema={ productSchema } closeModal={ closeModal } fetchProducts={ fetchProducts } categories={ categories } />
                 </Modal>
 
                 {/* update modal */ }
@@ -202,12 +185,12 @@ const Vendors = () => {
                     onAfterOpen={ afterUpdateOpenModal }
                     onRequestClose={ closeUpdateModal }
                     style={ customStyles }
-                    contentLabel="Update Vendor Modal"
+                    contentLabel="Update Product Modal"
                 >
                     <button onClick={ closeUpdateModal } className="text-right w-full pr-8">X</button>
-                    <h2 ref={ (_subtitle) => (updateSubtitle = _subtitle) } className="text-center w-full">Update Vendor</h2>
+                    <h2 ref={ (_subtitle) => (updateSubtitle = _subtitle) } className="text-center w-full">Update Product</h2>
 
-                    <VendorUpdateForm closeModal={ closeUpdateModal } fetchVendors={ fetchVendors } vendor={ selectedVendor } />
+                    <ProductUpdateForm closeModal={ closeUpdateModal } productSchema={ productSchema } fetchProducts={ fetchProducts } product={ selectedProduct } categories={ categories } />
                 </Modal>
 
                 {/* delete modal */ }
@@ -234,17 +217,16 @@ const Vendors = () => {
                             <button
                                 type="submit"
                                 className="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300"
-                                onClick={ handleDeleteVendor }
+                                onClick={ handleDeleteProduct }
                             >
                                 Yes, I'm sure
                             </button>
                         </div>
                     </div>
                 </Modal>
-
             </div>
         </>
     );
 }
 
-export default Vendors;
+export default Products;

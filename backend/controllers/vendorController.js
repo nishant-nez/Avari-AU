@@ -140,7 +140,7 @@ const updateVendor = async (req, res) => {
                         return res.status(201).json({ message: "Vendor updated successfully!" });
                     });
                 } else {
-                    pool.query(queries.updateVendor, [name, email, password, location, state, country, latitude, longitude, phone, id], (error, results) => {
+                    pool.query(queries.updateVendorPassword, [name, email, location, state, country, latitude, longitude, phone, id], (error, results) => {
                         if (error) return handleServerError(res, error, 'Error updating vendor!');
                         return res.status(201).json({ message: "Vendor updated successfully!" });
                     });

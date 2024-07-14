@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
-import AdminNav from "../components/AdminNav";
-import { AuthContext } from "../contexts/AuthContext";
-import axios from "../api/axios";
-import { Toast } from "../components/Toast";
+import AdminNav from "../../components/AdminNav";
+import { AuthContext } from "../../contexts/AuthContext";
+import axios from "../../api/axios";
+import { Toast } from "../../components/Toast";
 import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
