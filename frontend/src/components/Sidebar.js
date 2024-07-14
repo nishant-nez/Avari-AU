@@ -5,10 +5,22 @@ import { FiTrash2 } from 'react-icons/fi';
 import CartItem from '../components/CartItem';
 import { SidebarContext } from '../contexts/SidebarContext';
 import { CartContext } from '../contexts/CartContext';
+import { MinimumOrderContext } from '../contexts/MinimumOrderContext';
+import { Toast } from '../components/Toast';
 
 const Sidebar = () => {
   const { isOpen, handleClose } = useContext(SidebarContext);
   const { cart, clearCart, total, itemAmount } = useContext(CartContext);
+
+  const { minOrder } = useContext(MinimumOrderContext);
+
+  const handleClick = () => {
+    if (total < minOrder.value) {
+      Toast('error', `Minimum order amount should be $ ${ minOrder.value }!`);
+    } else {
+      Toast('success', `Your order has been placed successfully!`);
+    }
+  };
 
   return (
     <div
@@ -45,17 +57,23 @@ const Sidebar = () => {
         </div>
 
         <Link
-          to={ '/' }
-          className='bg-gray-200 flex p-4 justify-center items-center text-primary w-full font-medium'
+          to={ '/cart' }
+          className='bg-gray-200 flex p-4 justify-center items-center text-primary w-full font-medium cursor-pointer'
         >
           View Cart
         </Link>
-        <Link
-          to={ '/' }
-          className='bg-primary flex p-4 justify-center items-center text-white w-full font-medium'
+        <div
+          onClick={ handleClick }
+          className='bg-primary flex p-4 justify-center items-center text-white w-full font-medium cursor-pointer'
         >
           Checkout
-        </Link>
+        </div>
+        {/* <Link
+          to={ '/' }
+          className='bg-primary flex p-4 justify-center items-center text-white w-full font-medium cursor-pointer'
+        >
+          Checkout
+        </Link> */}
       </div>
     </div>
   );

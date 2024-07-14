@@ -39,6 +39,7 @@ app.use('/api/vendor', require('./routes/vendorRoute'));
 app.use('/api/category', require('./routes/categoryRoute'));
 app.use('/api/product', require('./routes/productRoute'));
 app.use('/api/minorder', require('./routes/minimumOrderRoute'));
+app.use('/api/auth', require('./routes/authRoute'));
 
 
 app.listen(port, () => console.log(`App listening on port ${ port }`));

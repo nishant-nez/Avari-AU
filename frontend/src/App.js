@@ -5,16 +5,21 @@ import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
 // components
 import Sidebar from './components/Sidebar';
-import Header from './components/Header';
 import Footer from './components/Footer';
+import Cart from './pages/Cart';
+import AdminLogin from './pages/AdminLogin';
+import Vendors from './pages/Vendors';
 
 const App = () => {
   return <div className='overflow-hidden'>
     <Router>
-      <Header />
       <Routes>
         <Route path='/' element={ <Home /> } />
         <Route path='/product/:id' element={ <ProductDetails /> } />
+        <Route path='/cart' element={ <Cart /> } />
+
+        <Route path='/admin/login' element={ <AdminLogin /> } />
+        <Route path='/admin/vendors' element={ <Vendors /> } />
       </Routes>
       <Sidebar />
       <Footer />
