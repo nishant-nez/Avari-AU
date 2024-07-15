@@ -1,28 +1,47 @@
-import { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Logo from '../img/logo.png';
+import { useContext, useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
-const AdminNav = () => {
+const adminLinks = [
+    { title: 'Home', link: '/admin' },
+    { title: 'Vendors', link: '/admin/vendors' },
+    { title: 'Products', link: '/admin/products' },
+    { title: 'Orders', link: '/admin/orders' },
+];
+
+const vendorLinks = [
+    { title: 'Home', link: '/vendor' },
+    { title: 'Products', link: '/vendor/products' },
+    { title: 'Orders', link: '/vendor/orders' },
+    { title: 'Others', link: '#' },
+];
+
+const Navbar = () => {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
+    const [links, setLinks] = useState([]);
 
-    const handleLogout = () => {
-        logout();
-        navigate('/admin/login');
-    };
+    useEffect(() => {
+        location.pathname.split('/')[1] === 'admin' ? setLinks(adminLinks) : setLinks(vendorLinks);
+    }, [location.pathname]);
 
     return (
         <nav className="bg-white fixed w-full z-20 top-0 start-0 border-b border-gray-200">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a href="/admin" className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
+                    <img src={ Logo } className="h-8" alt="Avari Logo" />
                     <span className="self-center text-2xl font-semibold whitespace-nowrap">Avari</span>
                 </a>
                 <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                     <button
                         type="button"
                         className="text-white bg-gray-800 hover:bg-primary font-medium rounded-lg text-sm px-4 py-2 text-center"
-                        onClick={ () => logout() }
+                        onClick={ () => {
+                            logout();
+                            location.pathname.split('/')[1] === 'admin' ? navigate('/admin/login') : navigate('/vendor/login');
+                        } }
                     >
                         Logout
                     </button>
@@ -35,39 +54,20 @@ const AdminNav = () => {
                 </div>
                 <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
                     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
-                        <li>
-                            <Link
-                                to={ '/admin' }
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-gray-500 md:p-0"
-                            >
-                                Home
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to={ '/admin/vendors' }
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-gray-500 md:p-0"
-                            >
-                                Vendors
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to={ '/admin/products' }
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-gray-500 md:p-0"
-                            >
-                                Products
-                            </Link>
-                        </li>
-                        <li>
-                            <Link
-                                to={ '/admin' }
-                                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-gray-500 md:p-0"
-                            >
-                                Other
-                            </Link>
-                        </li>
-
+                        {
+                            links.map((link) => {
+                                return (
+                                    <li key={ link.link }>
+                                        <Link
+                                            to={ link.link }
+                                            className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-gray-500 md:p-0"
+                                        >
+                                            { link.title }
+                                        </Link>
+                                    </li>
+                                )
+                            })
+                        }
                     </ul>
                 </div>
             </div>
@@ -76,4 +76,4 @@ const AdminNav = () => {
     );
 }
 
-export default AdminNav;
+export default Navbar;

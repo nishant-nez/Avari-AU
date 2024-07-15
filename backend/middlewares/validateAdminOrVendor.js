@@ -10,10 +10,9 @@ const validateVendorOrAdmin = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
         if (!decoded) return res.status(403).json({ message: "User not authorized!" });
 
-        const valid = decoded.user.role === 'admin' || decoded.user === 'vendor';
+        const valid = decoded.user.role === 'admin' || decoded.user.role === 'vendor';
         if (!valid) return res.status(403).json({ message: "User not authorized!" });
 
         req.user = decoded.user;

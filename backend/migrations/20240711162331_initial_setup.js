@@ -48,10 +48,10 @@ exports.up = async function (knex) {
         table.timestamps(true, true);
     });
 
-    // Create minimum_order table
-    await knex.schema.createTable('minimum_order', table => {
+    // Create default_values table
+    await knex.schema.createTable('default_values', table => {
         table.increments('id').primary();
-        table.decimal('value', 10, 2).notNullable().defaultTo(600.00);
+        table.decimal('minimum_order', 10, 2).notNullable().defaultTo(600.00);
         table.timestamps(true, true);
     });
 };

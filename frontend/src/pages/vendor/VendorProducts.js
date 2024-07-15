@@ -1,15 +1,18 @@
-import { useContext, useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
+import { useContext, useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { Toast } from "../../components/Toast";
 import Modal from 'react-modal';
 import * as Yup from "yup";
-import ProductRow from "../../components/ProductRow";
 import ProductAddForm from "../../components/ProductAddForm";
 import ProductUpdateForm from "../../components/ProductUpdateForm";
 import { ProductContext } from "../../contexts/ProductContext";
 import { CategoryContext } from "../../contexts/CategoryContext";
 import DeleteCard from "../../components/DeleteCard";
+import ProductRowVendor from "../../components/ProductRowVendor";
+import ProductAddFormVendor from "../../components/ProductAddFormVendor";
+import ProductUpdateFormVendor from "../../components/ProductUpdateFormVendor";
+import { AuthContext } from "../../contexts/AuthContext";
 
 // formik
 const productSchema = Yup.object().shape({
@@ -29,7 +32,6 @@ const columns = [
     { name: "Unit" },
     { name: "Category" },
     { name: "Created At" },
-    { name: "Vendor" },
     { name: "Action" },
 ];
 
@@ -49,12 +51,21 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
-const Products = () => {
+
+const VendorProducts = () => {
+    const { authState } = useContext(AuthContext);
     const { categories } = useContext(CategoryContext);
     const { products, fetchProducts } = useContext(ProductContext);
     const [selectedProduct, setSelectedProduct] = useState({});
     const [selectedDelProduct, setSelectedDelProduct] = useState({});
+    const [filteredProducts, setFilteredProducts] = useState([]);
 
+    useEffect(() => {
+        try {
+            const filProducts = products.filter((product) => product.vendor.id === authState.user.id);
+            setFilteredProducts(filProducts);
+        } catch (error) { }
+    }, [products, authState]);
 
     const handleDelete = (id) => {
         openDeleteModal(id);
@@ -95,7 +106,7 @@ const Products = () => {
     const [updateModalIsOpen, setUpdateIsOpen] = useState(false);
 
     function openUpdateModal(id) {
-        const selProduct = products.find((product) => product.id === id);
+        const selProduct = filteredProducts.find((product) => product.id === id);
         setSelectedProduct(selProduct);
         setUpdateIsOpen(true);
     }
@@ -111,7 +122,7 @@ const Products = () => {
     const [deleteModalIsOpen, setDeleteIsOpen] = useState(false);
 
     function openDeleteModal(id) {
-        const delProduct = products.find((product) => product.id === id);
+        const delProduct = filteredProducts.find((product) => product.id === id);
         setSelectedDelProduct(delProduct);
         setDeleteIsOpen(true);
     }
@@ -125,7 +136,7 @@ const Products = () => {
 
             <div className="w-full h-full flex flex-col items-center justify-center">
                 <div className="container mx-auto flex pt-36 justify-between items-center px-6">
-                    <h1 className="text-xl font-semibold">Products</h1>
+                    <h1 className="text-xl font-semibold">My Products</h1>
                     <div className='bg-primary flex p-3 w-[150px] rounded-lg justify-center items-center text-white font-medium cursor-pointer' onClick={ openModal }>
                         Add Product
                     </div>
@@ -144,9 +155,9 @@ const Products = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white">
-                                    { products.map((product) => {
+                                    { filteredProducts.map((product) => {
                                         return (
-                                            <ProductRow product={ product } openUpdateModal={ openUpdateModal } handleDelete={ handleDelete } key={ product.id } />
+                                            <ProductRowVendor product={ product } openUpdateModal={ openUpdateModal } handleDelete={ handleDelete } key={ product.id } />
                                         );
                                     }) }
 
@@ -166,7 +177,7 @@ const Products = () => {
                 >
                     <button onClick={ closeModal } className="text-right w-full pr-8">X</button>
                     <h2 ref={ (_subtitle) => (subtitle = _subtitle) } className="text-center w-full">Add Product</h2>
-                    <ProductAddForm productSchema={ productSchema } closeModal={ closeModal } fetchProducts={ fetchProducts } categories={ categories } />
+                    <ProductAddFormVendor productSchema={ productSchema } closeModal={ closeModal } fetchProducts={ fetchProducts } categories={ categories } />
                 </Modal>
 
                 {/* update modal */ }
@@ -180,7 +191,7 @@ const Products = () => {
                     <button onClick={ closeUpdateModal } className="text-right w-full pr-8">X</button>
                     <h2 ref={ (_subtitle) => (updateSubtitle = _subtitle) } className="text-center w-full">Update Product</h2>
 
-                    <ProductUpdateForm closeModal={ closeUpdateModal } productSchema={ productSchema } fetchProducts={ fetchProducts } product={ selectedProduct } categories={ categories } />
+                    <ProductUpdateFormVendor closeModal={ closeUpdateModal } productSchema={ productSchema } fetchProducts={ fetchProducts } product={ selectedProduct } categories={ categories } />
                 </Modal>
 
                 {/* delete modal */ }
@@ -190,4 +201,4 @@ const Products = () => {
     );
 }
 
-export default Products;
+export default VendorProducts;

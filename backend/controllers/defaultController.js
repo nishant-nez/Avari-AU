@@ -9,7 +9,7 @@ const handleServerError = (res, error, message) => {
 
 
 //@desc Get Minimum Order
-//@route GET /api/minorder
+//@route GET /api/default/minorder
 //@access public
 const getMinimumOrder = (req, res) => {
     try {
@@ -24,7 +24,7 @@ const getMinimumOrder = (req, res) => {
 }
 
 //@desc Update Minimum Order
-//@route PUT /api/minorder/update/
+//@route PUT /api/default/minorder/update/
 //@access private
 const updateMinOrder = async (req, res) => {
     const { value } = req.body;
@@ -32,9 +32,9 @@ const updateMinOrder = async (req, res) => {
         pool.query(queries.getMinimumOrder, async (error, results) => {
             if (error) return handleServerError(res, error, 'Error updating minimum order!');
             if (!results.rows.length) {
-                return res.status(400).json({ message: "Wrong id for minimum order!" });
+                return res.status(400).json({ message: "Minimum order not found in database!" });
             } else {
-                pool.query(queries.updateMinimumOrder, [value, 1], (error, results) => {
+                pool.query(queries.updateMinimumOrder, [value], (error, results) => {
                     if (error) return handleServerError(res, error, 'Error updating minimum order!');
                     return res.status(201).json({ message: "Minimum order updated successfully!" });
                 });

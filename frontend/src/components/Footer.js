@@ -14,7 +14,7 @@ const Footer = () => {
                 <p className="text-sm md:text-base"> Admin Login </p>
               </Link>
               <Link to={ '/vendor/login' } className="text-left ml-3 border py-2 px-4 cursor-pointer">
-                <p className="text-sm md:text-base"> Admin Login </p>
+                <p className="text-sm md:text-base"> Vendor Login </p>
               </Link>
             </div>
           </div>

@@ -7,7 +7,7 @@ const MinimumOrderProvider = ({ children }) => {
     const [minOrder, setMinOrder] = useState(0);
 
     const fetchMinimumOrder = async () => {
-        const response = await axios.get('/api/minorder', { withCredentials: true });
+        const response = await axios.get('/api/default/minorder', { withCredentials: true });
         setMinOrder(response.data);
     };
 

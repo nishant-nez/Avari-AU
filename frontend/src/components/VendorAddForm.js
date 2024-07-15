@@ -22,7 +22,6 @@ const VendorAddForm = ({ vendorSchema, closeModal, fetchVendors }) => {
     });
 
     const handleAddVendor = async (values) => {
-        console.log('values', values)
         try {
             const response = await axios.post('/api/vendor/register', values, { withCredentials: true });
             if (response.status === 201) {

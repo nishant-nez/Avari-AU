@@ -1,9 +1,9 @@
-import AdminNav from "../components/AdminNav";
+import Navbar from "../components/Navbar";
 
 const Products = () => {
     return (
         <>
-            <AdminNav />
+            <Navbar />
             products page for admin
         </>
     );

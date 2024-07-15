@@ -5,19 +5,19 @@ import { Toast } from "../../components/Toast";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 
-const AdminLogin = () => {
+const VendorLogin = () => {
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('/api/admin/login', { username, password }, { withCredentials: true });
+            const response = await axios.post('/api/vendor/login', { email, password }, { withCredentials: true });
             if (response.status === 200) {
                 login(response.data.user);
                 Toast('success', response.data.message);
-                navigate('/admin/dashboard');
+                navigate('/vendor/dashboard');
             }
         } catch (err) {
             Toast('error', err.response.data.message)
@@ -27,21 +27,22 @@ const AdminLogin = () => {
     return (
         <>
             <Navbar />
+
             <div className='h-screen w-full flex items-center justify-center'>
                 <div className="bg-white lg:w-4/12 md:6/12 w-10/12 m-auto my-10 mt-28 shadow-xl">
                     <div className="py-8 px-8 rounded-xl">
-                        <h1 className="font-medium text-2xl mt-3 text-center">Admin Login</h1>
+                        <h1 className="font-medium text-2xl mt-3 text-center">Vendor Login</h1>
                         <div className="mt-6">
                             <div className="my-5 text-sm">
-                                <label htmlFor="username" className="block text-black">Username</label>
+                                <label htmlFor="email" className="block text-black">Email</label>
                                 <input
-                                    type="text"
-                                    autoFocus id="username"
+                                    type="email"
+                                    autoFocus id="email"
                                     className="rounded-sm px-4 py-3 mt-3 focus:outline-none bg-gray-100 w-full"
-                                    placeholder="Username"
-                                    value={ username }
+                                    placeholder="email@example.com"
+                                    value={ email }
                                     required
-                                    onChange={ (e) => setUsername(e.target.value) }
+                                    onChange={ (e) => setEmail(e.target.value) }
                                 />
                             </div>
                             <div className="my-5 text-sm">
@@ -61,7 +62,8 @@ const AdminLogin = () => {
                             </div>
 
                             <button
-                                className="block text-center text-white bg-gray-800 p-3 duration-300 rounded-sm hover:bg-black w-full" type="submit"
+                                className="block text-center text-white bg-gray-800 p-3 duration-300 rounded-sm hover:bg-black w-full"
+                                type="submit"
                                 onClick={ handleLogin }
                             >
                                 Login
@@ -74,4 +76,4 @@ const AdminLogin = () => {
     );
 }
 
-export default AdminLogin;
+export default VendorLogin;

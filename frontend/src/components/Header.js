@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { SidebarContext } from '../contexts/SidebarContext';
 import { CartContext } from '../contexts/CartContext';
 import { BsBag } from 'react-icons/bs';
-import Logo from '../img/logo.svg';
+import Logo from '../img/logo.png';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
@@ -22,7 +22,7 @@ const Header = () => {
       <div className='container mx-auto flex items-center justify-between h-full'>
         <Link to={ '/' }>
           <div>
-            <img className='w-[40px]' src={ Logo } alt="logo" />
+            <img className='w-[80px]' src={ Logo } alt="logo" />
           </div>
         </Link>
         <div
