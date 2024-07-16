@@ -14,6 +14,8 @@ import VendorLogin from './pages/vendor/VendorLogin';
 import AdminOrders from './pages/admin/AdminOrders';
 import VendorOrders from './pages/vendor/VendorOrders';
 import VendorProducts from './pages/vendor/VendorProducts';
+import CheckoutSuccess from './pages/CheckoutSuccess';
+import CheckoutCancel from './pages/CheckoutCancel';
 
 const App = () => {
   return <div className='overflow-hidden'>
@@ -22,6 +24,9 @@ const App = () => {
         <Route path='/' element={ <Home /> } />
         <Route path='/product/:id' element={ <ProductDetails /> } />
         <Route path='/cart' element={ <Cart /> } />
+
+        <Route path='/checkout-success' element={ <CheckoutSuccess /> } />
+        <Route path='/checkout-cancel' element={ <CheckoutCancel /> } />
 
         <Route path='/admin/login' element={ <AdminLogin /> } />
         <Route path='/admin/vendors' element={ <Vendors /> } />

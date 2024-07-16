@@ -54,6 +54,35 @@ exports.up = async function (knex) {
         table.decimal('minimum_order', 10, 2).notNullable().defaultTo(600.00);
         table.timestamps(true, true);
     });
+
+    // Create orders table
+    await knex.schema.createTable('orders', table => {
+        table.increments('id').primary();
+        table.string('stripe_id').unique().notNullable();
+        table.integer('amount_subtotal').notNullable();
+        table.integer('amount_total').notNullable();
+        table.string('city').nullable();
+        table.string('country').nullable();
+        table.string('address_line_1').nullable();
+        table.string('address_line_2').nullable();
+        table.string('postal_code').nullable();
+        table.string('state').nullable();
+        table.string('name').nullable();
+        table.string('email').nullable();
+        table.string('phone').nullable();
+        table.string('currency', 10).nullable();
+        table.integer('shipping_cost').nullable();
+        table.string('status').defaultTo('To be delivered');
+        table.timestamps(true, true);
+    });
+
+    // Create order_items table
+    await knex.schema.createTable('order_items', table => {
+        table.increments('id').primary();
+        table.integer('order_id').unsigned().references('id').inTable('orders').onDelete('CASCADE');
+        table.integer('product_id').unsigned().references('id').inTable('products').onDelete('CASCADE');
+        table.integer('quantity').notNullable();
+    });
 };
 
 exports.down = async function (knex) {
@@ -71,4 +100,10 @@ exports.down = async function (knex) {
 
     // Drop minimum_order table
     await knex.schema.dropTableIfExists('minimum_order');
+
+    // Drop orders table
+    await knex.schema.dropTableIfExists('orders');
+
+    // Drop order_items table
+    await knex.schema.dropTableIfExists('order_items');
 }; 

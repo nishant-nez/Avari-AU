@@ -154,6 +154,7 @@ JOIN
     vendors v ON p.vendor_id = v.id
 WHERE v.id = $1;
 `;
+const getProductByPriceName = "SELECT id, vendor_id FROM products WHERE price = $1 AND name = $2";
 const addProduct = "INSERT INTO products (name, category_id, price, unit, image, description, vendor_id) VALUES ($1, $2, $3, $4, $5, $6, $7)";
 const updateProduct = "UPDATE products SET name = $1, category_id = $2, price = $3, unit = $4, description = $5, vendor_id = $6 WHERE id = $7";
 const updateProductImage = "UPDATE products SET image = $1 WHERE id = $2"
@@ -161,7 +162,42 @@ const deleteProduct = "DELETE FROM products WHERE id = $1";
 
 // default_values
 const getMinimumOrder = "SELECT * FROM default_values LIMIT 1";
-const updateMinimumOrder = "UPDATE default_values set minimum_order = $1"
+const updateMinimumOrder = "UPDATE default_values SET minimum_order = $1"
+
+// orders
+const getOrders = "SELECT * FROM orders";
+const getOrderById = "SELECT * FROM orders WHERE id = $1";
+const addOrder = `
+INSERT INTO orders (
+    stripe_id, 
+    amount_subtotal, 
+    amount_total, 
+    city, 
+    country, 
+    address_line_1, 
+    address_line_2, 
+    postal_code, 
+    state, 
+    name, 
+    email, 
+    phone, 
+    currency, 
+    shipping_cost, 
+    status
+) VALUES (
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+) RETURNING id;
+`;
+const updateOrderStatus = "UPDATE orders SET status = $1";
+const deleteOrder = "DELETE FROM orders WHERE id = $1";
+
+// order_items
+const getOrderItems = "SELECT * FROM order_items";
+const getOrderItemsById = "SELECT * FROM order_items WHERE id = $1";
+const getOrderItemsByOrderId = "SELECT * FROM order_items WHERE order_id = $1";
+const getOrderItemsByVendorId = "SELECT * FROM order_items WHERE vendor_id = $1";
+const getOrderItemsByProductId = "SELECT * FROM order_items WHERE product_id = $1";
+const addOrderItem = "INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)";
 
 
 module.exports = {
@@ -191,6 +227,7 @@ module.exports = {
     getProductById,
     getProductsByCategory,
     getProductsByVendor,
+    getProductByPriceName,
     addProduct,
     updateProduct,
     updateProductImage,
@@ -198,4 +235,17 @@ module.exports = {
     // minimum_order
     getMinimumOrder,
     updateMinimumOrder,
+    // orders
+    getOrders,
+    getOrderById,
+    addOrder,
+    updateOrderStatus,
+    deleteOrder,
+    // order_items
+    getOrderItems,
+    getOrderItemsById,
+    getOrderItemsByOrderId,
+    getOrderItemsByVendorId,
+    getOrderItemsByProductId,
+    addOrderItem,
 }

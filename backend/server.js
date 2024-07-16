@@ -19,7 +19,6 @@ const app = express();
 const port = process.env.PORT;
 
 // middlewares
-app.use(express.json());
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use(cors(corsOptions));
@@ -29,6 +28,13 @@ app.use(cors(corsOptions));
 db.migrate.latest()
     .then(() => console.log('Database migrated successfully'))
     .catch(error => console.error('Error migrating database:', error));
+
+
+app.use('/api/stripe', require('./routes/stripeRoute'));
+
+
+app.use(express.json());
+
 
 // routes
 app.get('/', (req, res) => {

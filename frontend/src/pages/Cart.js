@@ -5,18 +5,37 @@ import { CartContext } from '../contexts/CartContext';
 import { MinimumOrderContext } from '../contexts/MinimumOrderContext';
 import CartCard from '../components/CartCard';
 import { Toast } from '../components/Toast';
+import axios from '../api/axios';
 
 const Cart = () => {
     const { cart, total } = useContext(CartContext);
     const { minOrder } = useContext(MinimumOrderContext);
 
-    const handleClick = () => {
-        if (total < minOrder.value) {
-            Toast('error', `Minimum order amount should be $ ${ minOrder.value }!`);
+    const handleClick = async () => {
+        console.log('clicked');
+        console.log('min order', minOrder)
+        console.log('cart: ', cart)
+        if (total < minOrder.minimum_order) {
+            Toast('error', `Minimum order amount should be $ ${ minOrder.minimum_order }`);
         } else {
+
+            try {
+                const response = await axios.post(
+                    '/api/stripe/create-checkout-session',
+                    { cart },
+                    { withCredentials: true },
+                );
+                if (response.data.url) {
+                    window.location.href = response.data.url;
+                }
+            } catch (err) {
+                console.log(err);
+            }
+
             Toast('success', `Your order has been placed successfully!`);
         }
     };
+
 
     return (
         <>
