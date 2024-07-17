@@ -97,7 +97,7 @@ const webhookControl = async (req, res) => {
             const email = event.data.object.customer_details.email;
             const phone = event.data.object.customer_details.phone;
             const currency = event.data.object.currency;
-            const shipping_cost = event.data.object.shipping_cost.amount_subtotal;
+            const shipping_cost = parseFloat(event.data.object.shipping_cost.amount_subtotal) / 100;
             const status = 'To be delivered';
 
             pool.query(

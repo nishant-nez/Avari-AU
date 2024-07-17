@@ -165,8 +165,101 @@ const getMinimumOrder = "SELECT * FROM default_values LIMIT 1";
 const updateMinimumOrder = "UPDATE default_values SET minimum_order = $1"
 
 // orders
-const getOrders = "SELECT * FROM orders";
-const getOrderById = "SELECT * FROM orders WHERE id = $1";
+const getOrders = `
+SELECT 
+    o.id, 
+    o.stripe_id, 
+    o.amount_subtotal, 
+    o.amount_total, 
+    o.city, 
+    o.country, 
+    o.address_line_1, 
+    o.address_line_2, 
+    o.postal_code, 
+    o.state, 
+    o.name, 
+    o.email, 
+    o.phone, 
+    o.currency, 
+    o.shipping_cost, 
+    o.status, 
+    o.created_at,
+    json_agg(
+        json_build_object(
+            'id', p.id,
+            'name', p.name,
+            'description', p.description,
+            'price', p.price,
+            'unit', p.unit,
+            'image', p.image,
+            'quantity', oi.quantity,
+            'vendor', json_build_object(
+                'id', v.id,
+                'name', v.name,
+                'email', v.email,
+                'location', v.location,
+                'state', v.state,
+                'country', v.country,
+                'latitude', v.latitude,
+                'longitude', v.longitude,
+                'phone', v.phone
+            )
+        )
+    ) AS products
+FROM orders o
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+JOIN vendors v ON p.vendor_id = v.id
+GROUP BY o.id
+`;
+const getOrderById = `
+SELECT 
+    o.id, 
+    o.stripe_id, 
+    o.amount_subtotal, 
+    o.amount_total, 
+    o.city, 
+    o.country, 
+    o.address_line_1, 
+    o.address_line_2, 
+    o.postal_code, 
+    o.state, 
+    o.name, 
+    o.email, 
+    o.phone, 
+    o.currency, 
+    o.shipping_cost, 
+    o.status, 
+    o.created_at,
+    json_agg(
+        json_build_object(
+            'id', p.id,
+            'name', p.name,
+            'description', p.description,
+            'price', p.price,
+            'unit', p.unit,
+            'image', p.image,
+            'quantity', oi.quantity,
+            'vendor', json_build_object(
+                'id', v.id,
+                'name', v.name,
+                'email', v.email,
+                'location', v.location,
+                'state', v.state,
+                'country', v.country,
+                'latitude', v.latitude,
+                'longitude', v.longitude,
+                'phone', v.phone
+            )
+        )
+    ) AS products
+FROM orders o
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+JOIN vendors v ON p.vendor_id = v.id
+WHERE o.id = $1
+GROUP BY o.id
+`;
 const addOrder = `
 INSERT INTO orders (
     stripe_id, 
@@ -188,7 +281,7 @@ INSERT INTO orders (
     $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
 ) RETURNING id;
 `;
-const updateOrderStatus = "UPDATE orders SET status = $1";
+const updateOrderStatus = "UPDATE orders SET status = $1 WHERE id = $2";
 const deleteOrder = "DELETE FROM orders WHERE id = $1";
 
 // order_items
