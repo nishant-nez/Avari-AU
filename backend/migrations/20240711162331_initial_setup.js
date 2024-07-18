@@ -59,8 +59,8 @@ exports.up = async function (knex) {
     await knex.schema.createTable('orders', table => {
         table.increments('id').primary();
         table.string('stripe_id').unique().notNullable();
-        table.integer('amount_subtotal').notNullable();
-        table.integer('amount_total').notNullable();
+        table.decimal('amount_subtotal', 10, 2).notNullable();
+        table.decimal('amount_total', 10, 2).notNullable();
         table.string('city').nullable();
         table.string('country').nullable();
         table.string('address_line_1').nullable();
@@ -71,7 +71,7 @@ exports.up = async function (knex) {
         table.string('email').nullable();
         table.string('phone').nullable();
         table.string('currency', 10).nullable();
-        table.integer('shipping_cost').nullable();
+        table.decimal('shipping_cost', 10, 2).nullable();
         table.string('status').defaultTo('To be delivered');
         table.timestamps(true, true);
     });

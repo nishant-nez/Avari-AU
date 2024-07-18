@@ -2,6 +2,7 @@ const { reject } = require("bcrypt/promises");
 const pool = require("../config/db");
 const queries = require("../config/queries");
 const { rows } = require("pg/lib/defaults");
+const sendMail = require("../config/sendMail");
 
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
@@ -42,7 +43,7 @@ const createCheckout = async (req, res) => {
                 shipping_rate_data: {
                     type: 'fixed_amount',
                     fixed_amount: {
-                        amount: 20,
+                        amount: 2000,
                         currency: 'usd',
                     },
                     display_name: 'Standard shipping',
@@ -73,11 +74,10 @@ const webhookControl = async (req, res) => {
     try {
         event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
     } catch (error) {
-        console.log('error', error);
+        console.log('Error constructing Stripe event:', error);
         return res.status(400).json({ success: false, message: error.message });
     }
 
-    // handle the event
     if (event.type === 'checkout.session.completed') {
         const sessionId = event.data.object.id;
 
@@ -104,10 +104,19 @@ const webhookControl = async (req, res) => {
                 queries.addOrder,
                 [stripe_id, amount_subtotal, amount_total, city, country, address_line_1, address_line_2, postal_code, state, name, email, phone, currency, shipping_cost, status],
                 async (error, results) => {
-                    if (error) return res.status(500).json({ message: "Internal server error" });
+                    if (error) {
+                        console.log('Error adding order to database:', error);
+                        return res.status(500).json({ message: "Internal server error" });
+                    }
+
+                    if (!results || !results.rows || results.rows.length === 0) {
+                        console.log('No order was added to the database.');
+                        return res.status(500).json({ message: "Failed to add order to database" });
+                    }
+
                     const order_id = results.rows[0].id;
 
-                    const itemInsertPromises = items.data.map(async (item) => {
+                    const itemInsertPromises = items.data.map((item) => {
                         const quantity = item.quantity;
                         const price = parseFloat(item.price.unit_amount) / 100;
                         const name = item.description;
@@ -118,6 +127,12 @@ const webhookControl = async (req, res) => {
                                 [price, name],
                                 (error, results) => {
                                     if (error) return reject(error);
+
+                                    if (!results || !results.rows || results.rows.length === 0) {
+                                        console.log(`No product found for price: ${ price }, name: ${ name }`);
+                                        return reject(new Error(`Product not found for price: ${ price }, name: ${ name }`));
+                                    }
+
                                     const product_id = results.rows[0].id;
 
                                     pool.query(
@@ -125,6 +140,7 @@ const webhookControl = async (req, res) => {
                                         [order_id, product_id, quantity],
                                         (error, results) => {
                                             if (error) return reject(error);
+
                                             resolve();
                                         }
                                     );
@@ -135,7 +151,25 @@ const webhookControl = async (req, res) => {
 
                     try {
                         await Promise.all(itemInsertPromises);
-                        res.json({ success: true });
+
+                        pool.query(queries.getOrderById, [order_id], (error, results) => {
+                            if (error) {
+                                console.error('Error retrieving order by ID:', error);
+                                return res.status(500).json({ message: "Internal server error" });
+                            }
+
+                            if (!results || !results.rows || results.rows.length === 0) {
+                                console.log(`Order not found with ID: ${ order_id }`);
+                                return res.status(500).json({ message: `Order not found with ID: ${ order_id }` });
+                            }
+
+                            const order = results.rows[0];
+
+                            // send emails
+                            sendMail(order);
+
+                            res.json({ success: true });
+                        });
                     } catch (error) {
                         console.error('Error in adding to order_items table', error);
                         res.status(500).json({ message: "Internal server error" });
@@ -143,7 +177,7 @@ const webhookControl = async (req, res) => {
                 }
             );
         } catch (error) {
-            console.error('Error in adding to orders table', error);
+            console.error('Error processing checkout session:', error);
             return res.status(500).json({ message: "Internal server error" });
         }
     } else {
@@ -151,6 +185,8 @@ const webhookControl = async (req, res) => {
     }
 };
 
-module.exports = { webhookControl };
+
+
+
 
 module.exports = { createCheckout, webhookControl };

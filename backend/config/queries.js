@@ -10,6 +10,7 @@ const deleteVendor = "DELETE FROM vendors WHERE id = $1";
 // admin
 const getAdmins = "SELECT * FROM admins";
 const getAdminById = "SELECT * FROM admins WHERE id = $1";
+const getAdminEmails = "SELECT email FROM admins";
 const checkAdminUsernameExists = "SELECT * FROM admins WHERE username = $1";
 const checkAdminEmailExists = "SELECT * FROM admins WHERE email = $1";
 const addAdmin = "INSERT INTO admins (username, email, password) VALUES ($1, $2, $3)";
@@ -297,6 +298,7 @@ module.exports = {
     // vendors
     getVendors,
     getVendorById,
+    getAdminEmails,
     checkVendorEmailExists,
     addVendor,
     updateVendor,
