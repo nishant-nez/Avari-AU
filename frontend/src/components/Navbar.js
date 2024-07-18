@@ -4,14 +4,14 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
 const adminLinks = [
-    { title: 'Home', link: '/admin' },
+    { title: 'Home', link: '/admin/dashboard' },
     { title: 'Vendors', link: '/admin/vendors' },
     { title: 'Products', link: '/admin/products' },
     { title: 'Orders', link: '/admin/orders' },
 ];
 
 const vendorLinks = [
-    { title: 'Home', link: '/vendor' },
+    { title: 'Home', link: '/vendor/dashboard' },
     { title: 'Products', link: '/vendor/products' },
     { title: 'Orders', link: '/vendor/orders' },
     { title: 'Others', link: '#' },
