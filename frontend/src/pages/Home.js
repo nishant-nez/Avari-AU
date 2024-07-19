@@ -14,6 +14,73 @@ const Home = () => {
   const [query, setQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState(products);
 
+  // location
+  const [location, setLocation] = useState(null);
+  const [accuracy, setAccuracy] = useState(null);
+  const [locationError, setLocationError] = useState(null);
+  const useLocation = (enabled, accuracyThreshold, accuracyThresholdWaitTime, options) => {
+
+    useEffect(() => {
+      if (!enabled) {
+        setAccuracy(undefined);
+        setLocationError(undefined);
+        setLocation(undefined);
+        return;
+      }
+
+      if (navigator.geolocation) {
+        let timeout;
+        const geoId = navigator.geolocation.watchPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            setAccuracy(position.coords.accuracy);
+
+            if (accuracyThreshold == null || position.coords.accuracy < accuracyThreshold) {
+              setLocation({ lat, lng });
+            }
+          },
+          (e) => {
+            setLocationError(e.message);
+          },
+          options ?? { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
+        );
+        if (accuracyThreshold && accuracyThresholdWaitTime) {
+          timeout = setTimeout(() => {
+            if (!accuracy || accuracy < accuracyThreshold) {
+              setLocationError('Failed to reach desired accuracy');
+            }
+          }, accuracyThresholdWaitTime * 1000);
+        }
+        return () => {
+          window.navigator.geolocation.clearWatch(geoId);
+          if (timeout) {
+            clearTimeout(timeout);
+          }
+        };
+      }
+
+      setLocationError('Geolocation API not available');
+    }, [enabled, accuracy, accuracyThreshold, accuracyThresholdWaitTime, options]);
+
+    if (!enabled) {
+      return [undefined, undefined, undefined];
+    }
+
+    return [location, accuracy, locationError];
+  };
+
+  useLocation(true, 300, 100);
+
+  useEffect(() => {
+    console.log('location: ', location);
+  }, [location])
+
+
+
+  // location
+
+
   useEffect(() => {
     setFilteredProducts(products);
   }, [products]);
@@ -33,6 +100,7 @@ const Home = () => {
   const handleClear = () => {
     setQuery('');
     setFilteredProducts(products);
+    setSelectedCategory(0);
   }
 
   return (
