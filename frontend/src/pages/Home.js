@@ -6,101 +6,29 @@ import Hero from '../components/Hero';
 import { CategoryContext } from '../contexts/CategoryContext';
 import { IoMdClose } from 'react-icons/io';
 import { Toast } from '../components/Toast';
+import { LocationContext } from '../contexts/LocationContext';
 
 const Home = () => {
-  const { products } = useContext(ProductContext);
+  const { filteredProducts, handleSearch, handleCategoryChange, clear, filterByVendor } = useContext(ProductContext);
   const { categories } = useContext(CategoryContext);
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [query, setQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState(products);
 
   // location
-  const [location, setLocation] = useState(null);
-  const [accuracy, setAccuracy] = useState(null);
-  const [locationError, setLocationError] = useState(null);
-  const useLocation = (enabled, accuracyThreshold, accuracyThresholdWaitTime, options) => {
+  const { location, address, locationError, closestVendorId } = useContext(LocationContext);
 
-    useEffect(() => {
-      if (!enabled) {
-        setAccuracy(undefined);
-        setLocationError(undefined);
-        setLocation(undefined);
-        return;
-      }
-
-      if (navigator.geolocation) {
-        let timeout;
-        const geoId = navigator.geolocation.watchPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            setAccuracy(position.coords.accuracy);
-
-            if (accuracyThreshold == null || position.coords.accuracy < accuracyThreshold) {
-              setLocation({ lat, lng });
-            }
-          },
-          (e) => {
-            setLocationError(e.message);
-          },
-          options ?? { enableHighAccuracy: true, maximumAge: 2000, timeout: 5000 }
-        );
-        if (accuracyThreshold && accuracyThresholdWaitTime) {
-          timeout = setTimeout(() => {
-            if (!accuracy || accuracy < accuracyThreshold) {
-              setLocationError('Failed to reach desired accuracy');
-            }
-          }, accuracyThresholdWaitTime * 1000);
-        }
-        return () => {
-          window.navigator.geolocation.clearWatch(geoId);
-          if (timeout) {
-            clearTimeout(timeout);
-          }
-        };
-      }
-
-      setLocationError('Geolocation API not available');
-    }, [enabled, accuracy, accuracyThreshold, accuracyThresholdWaitTime, options]);
-
-    if (!enabled) {
-      return [undefined, undefined, undefined];
+  useEffect(() => {
+    if (closestVendorId) {
+      filterByVendor(closestVendorId);
     }
+  }, [closestVendorId]);
 
-    return [location, accuracy, locationError];
-  };
-
-  useLocation(true, 300, 100);
-
-  useEffect(() => {
-    console.log('location: ', location);
-  }, [location])
-
-
-
-  // location
-
-
-  useEffect(() => {
-    setFilteredProducts(products);
-  }, [products]);
-
-  const handleClick = (id) => {
-    setSelectedCategory(id);
-    const filtered = products.filter((product) => product.category.id === id);
-    setFilteredProducts(filtered);
-  };
-
-  const handleSearch = () => {
-    Toast('success', 'yaay');
-    const filtered = filteredProducts.filter((product) => product.name.toLowerCase().includes(query.toLowerCase()));
-    setFilteredProducts(filtered);
-  };
 
   const handleClear = () => {
     setQuery('');
-    setFilteredProducts(products);
     setSelectedCategory(0);
+    clear();
+    if (closestVendorId) filterByVendor(closestVendorId);
   }
 
   return (
@@ -132,7 +60,7 @@ const Home = () => {
                   />
                   <button
                     className="text-white absolute end-2.5 bottom-2.5 bg-gray-700 hover:bg-primary focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2"
-                    onClick={ handleSearch }
+                    onClick={ () => { handleSearch(query) } }
                   >
                     Search
                   </button>
@@ -145,7 +73,10 @@ const Home = () => {
               { categories.map((category) => {
                 return (
                   <div
-                    onClick={ () => handleClick(category.id) }
+                    onClick={ () => {
+                      setSelectedCategory(category.id);
+                      handleCategoryChange(category.id);
+                    } }
                     className={ `${ category.id === selectedCategory ? 'bg-primary text-white' : 'bg-gray-50 text-primary' } border border-gray-400 hover:bg-primary hover:text-white p-3 justify-evenly items-center font-medium cursor-pointer` }
                     key={ category.id }
                   >
@@ -161,6 +92,11 @@ const Home = () => {
               </div>
             </div>
 
+            { address &&
+              <div className='mt-3 mb-5'>
+                Showing results for <span className='font-bold'> { address } </span>
+              </div>
+            }
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-[30px] max-w-sm mx-auto md:max-w-none md:mx-0'>
               { filteredProducts.map((product) => {
                 return (

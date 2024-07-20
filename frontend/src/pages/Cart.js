@@ -12,9 +12,6 @@ const Cart = () => {
     const { minOrder } = useContext(MinimumOrderContext);
 
     const handleClick = async () => {
-        console.log('clicked');
-        console.log('min order', minOrder)
-        console.log('cart: ', cart)
         if (total < minOrder.minimum_order) {
             Toast('error', `Minimum order amount should be $ ${ minOrder.minimum_order }`);
         } else {

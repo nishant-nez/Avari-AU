@@ -6,7 +6,7 @@ const { getVendors, getVendor, registerVendor, loginVendor, updateVendor, delete
 
 const router = express.Router();
 
-router.get("/all", validateVendorOrAdmin, getVendors);
+router.get("/all", getVendors);
 router.get("/:id", validateVendorOrAdmin, getVendor);
 router.post("/register", validateAdmin, registerVendor);
 router.post("/login", loginVendor);

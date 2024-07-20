@@ -10,6 +10,7 @@ import CategoryProvider from './contexts/CategoryContext';
 import MinimumOrderProvider from './contexts/MinimumOrderContext';
 import { ToastBox } from './components/Toast';
 import AuthProvider from './contexts/AuthContext';
+import LocationProvider from './contexts/LocationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -20,9 +21,11 @@ root.render(
         <MinimumOrderProvider>
           <CartProvider>
             <CategoryProvider>
-              <ProductProvider>
-                <App />
-              </ProductProvider>
+              <LocationProvider>
+                <ProductProvider>
+                  <App />
+                </ProductProvider>
+              </LocationProvider>
             </CategoryProvider>
           </CartProvider>
         </MinimumOrderProvider>
