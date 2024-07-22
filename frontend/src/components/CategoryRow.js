@@ -6,13 +6,23 @@ const CategoryRow = ({ category, totalProducts, openUpdateModal, handleDelete })
 
     return (
         <>
-            <tr className="text-gray-700">
-                <td className="px-4 py-3 text-ms font-semibold border">{ category.id }</td>
-                <td className="px-4 py-3 text-sm border">{ category.name }</td>
-                <td className="px-4 py-3 text-sm border">{ totalProducts }</td>
-                <td className="px-4 py-3 text-sm border">{ category.created_at.split('T')[0] }</td>
+            <tr
+                className="flex flex-col sm:table-row mb-2 sm:mb-0"
+            >
+                <td className="border hover:bg-[#222E3A]/[6%] hover:sm:bg-transparent py-3 px-5">
+                    { category.id }
+                </td>
+                <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
+                    { category.name }
+                </td>
+                <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
+                    { totalProducts }
+                </td>
+                <td className="border hover:bg-[#222E3A]/[6%]  hover:sm:bg-transparent py-3 px-5">
+                    { category.created_at.split('T')[0] }
+                </td>
                 <td className="px-4 py-3 border">
-                    <div className="h-full flex gap-4 justify-center">
+                    <div className="h-full flex justify-center gap-2">
                         <button
                             type="button"
                             className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 hover:text-gray-900 focus:z-10"

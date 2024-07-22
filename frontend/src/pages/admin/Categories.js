@@ -10,11 +10,11 @@ import DeleteCard from "../../components/DeleteCard";
 import CategoryUpdateForm from "../../components/CategoryUpdateForm";
 
 const columns = [
-    { name: "ID" },
-    { name: "Name" },
-    { name: "Total Products" },
-    { name: "Created At" },
-    { name: "Action" },
+    { name: "ID", style: "py-3 px-5 text-left border border-b" },
+    { name: "Name", style: "py-3 px-5 text-left border border-b" },
+    { name: "Total Products", style: "py-3 px-5 text-left border border-b" },
+    { name: "Created At", style: "py-3 px-5 text-left border border-b" },
+    { name: "Action", style: "my-3 py-[0.50rem] px-6 text-left sm:border sm:border-b" },
 ];
 
 // modal
@@ -141,15 +141,19 @@ const Categories = () => {
 
                 {/* table  */ }
                 <section className="min-h-screen container mx-auto p-6 font-mono">
-                    <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                    <div className="w-full mb-8 overflow-hidden rounded-lg">
                         <div className="w-full overflow-x-auto">
-                            <table className="w-full">
+                            <table className="sm:inline-table w-full flex flex-row justify-center overflow-hidden">
                                 <thead>
-                                    <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b">
-                                        { columns.map((item) => {
-                                            return <th key={ item.name } className="px-4 py-3">{ item.name }</th>
-                                        }) }
-                                    </tr>
+                                    { categories.map((category, index) => (
+                                        <tr className={ `bg-[#222E3A]/[6%] flex flex-col sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0 ${ index === 0 ? "sm:flex" : "sm:hidden"
+                                            }` }
+                                            key={ index }>
+                                            { columns.map((item) => {
+                                                return <th key={ item.name } className={ item.style }>{ item.name }</th>
+                                            }) }
+                                        </tr>
+                                    )) }
                                 </thead>
                                 <tbody className="bg-white">
                                     { categories.map((category) => {

@@ -70,7 +70,7 @@ const getProductsByVendor = (req, res) => {
         pool.query(queries.getProductsByVendor, [id], (error, results) => {
             if (error) return handleServerError(res, error, 'Error getting products!');
             if (results.rows.length) {
-                res.status(200).json(results.rows[0]);
+                res.status(200).json(results.rows);
             } else res.status(404).json({ message: "Product not found!" });
         });
     } catch (error) {

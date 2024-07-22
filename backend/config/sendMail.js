@@ -108,7 +108,7 @@ const sendMail = (data, callback) => {
     // Send to admin
     const adminMailOptions = {
         from: `Avari <${ process.env.EMAIL_USERNAME }>`,
-        to: process.email.ADMIN_EMAIL,
+        to: process.env.ADMIN_EMAIL,
         subject: 'New Order Placed for admin',
         html: generateTable(data)
     };
@@ -161,6 +161,7 @@ const sendMail = (data, callback) => {
 
         const vendorMailOptions = {
             from: `Avari <${ process.env.EMAIL_USERNAME }>`,
+            // development
             // to: vendorData.email,
             to: process.env.ADMIN_EMAIL,
             subject: 'New Order Placed for ' + vendorData.email,

@@ -23,15 +23,15 @@ const vendorSchema = Yup.object().shape({
 });
 
 const columns = [
-    { name: "ID" },
-    { name: "Name" },
-    { name: "Email" },
-    { name: "Phone" },
-    { name: "Address" },
-    { name: "State/Country" },
-    { name: "Coordinates" },
-    { name: "Created At" },
-    { name: "Action" },
+    { name: "ID", style: "py-3 px-5 text-left border border-b rounded-tl-lg lg:rounded-none" },
+    { name: "Name", style: "my-3 py-[0.80rem] px-6 text-left lg:border lg:border-b" },
+    { name: "Email", style: "py-3 px-5 text-left border border-b" },
+    { name: "Phone", style: "py-3 px-5 text-left border border-b" },
+    { name: "Address", style: "py-3 px-5 text-left border border-b" },
+    { name: "State/Country", style: "py-3 px-5 text-left border border-b" },
+    { name: "Coordinates", style: "py-3 px-5 text-left border border-b" },
+    { name: "Created At", style: "py-3 px-5 text-left border border-b" },
+    { name: "Action", style: "my-3 py-[0.51rem] px-6 text-left lg:border lg:border-b" },
 ];
 
 // modal
@@ -147,15 +147,19 @@ const Vendors = () => {
 
                 {/* table  */ }
                 <section className="h-screen container mx-auto p-6 font-mono">
-                    <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
+                    <div className="w-full mb-8 overflow-hidden rounded-lg">
                         <div className="w-full overflow-x-auto">
-                            <table className="w-full">
+                            <table className="lg:inline-table w-full flex flex-row justify-center overflow-hidden">
                                 <thead>
-                                    <tr className="text-md font-semibold tracking-wide text-left text-gray-900 bg-gray-100 uppercase border-b">
-                                        { columns.map((item) => {
-                                            return <th key={ item.name } className="px-4 py-3">{ item.name }</th>
-                                        }) }
-                                    </tr>
+                                    { vendors.map((vendor, index) => (
+                                        <tr className={ `bg-[#222E3A]/[6%] flex flex-col lg:table-row rounded-l-lg lg:rounded-none mb-2 lg:mb-0 ${ index === 0 ? "lg:flex" : "lg:hidden"
+                                            }` }
+                                            key={ index }>
+                                            { columns.map((item) => {
+                                                return <th key={ item.name } className={ item.style }>{ item.name }</th>
+                                            }) }
+                                        </tr>
+                                    )) }
                                 </thead>
                                 <tbody className="bg-white">
                                     { vendors.map((vendor) => {

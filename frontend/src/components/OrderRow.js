@@ -44,7 +44,7 @@ const OrderRow = ({ order, openModal, name }) => {
             <td className="px-4 py-3 text-sm border text-center">{ order.phone }</td>
             <td className="px-4 py-3 text-sm border text-center">
                 { order.products.map(product => {
-                    return <div key={ product.id } className="flex items-center gap-2 mb-2">
+                    return <div key={ product.id } className="flex items-center gap-1 mb-2">
                         { product.quantity }
                         <span>x</span>
                         <img src={ `${ process.env.REACT_APP_BACKEND_URL }/${ product.image }` } alt={ product.name } className="h-8 w-8 rounded-full" />
