@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import axios from "../../api/axios";
 import { Toast } from "../../components/Toast";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link, Navigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 
 const AdminLogin = () => {
@@ -10,9 +10,13 @@ const AdminLogin = () => {
     const location = useLocation();
     const from = location.state?.from?.pathname || '/admin/dashboard';
 
-    const { login } = useContext(AuthContext);
+    const { authState, login } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    if (authState.role === 'admin') {
+        return <Navigate to='/admin/dashboard' replace />;
+    }
 
     const handleLogin = async () => {
         try {

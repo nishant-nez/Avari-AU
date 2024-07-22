@@ -19,6 +19,7 @@ import CheckoutSuccess from './pages/CheckoutSuccess';
 import CheckoutCancel from './pages/CheckoutCancel';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VendorDashboard from './pages/vendor/VendorDashboard';
+import Categories from './pages/admin/Categories';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
           <Route path='/admin/dashboard' element={ <AdminDashboard /> } />
           <Route path='/admin/vendors' element={ <Vendors /> } />
           <Route path='/admin/products' element={ <Products /> } />
+          <Route path='/admin/categories' element={ <Categories /> } />
           <Route path='/admin/orders' element={ <AdminOrders /> } />
         </Route>
 

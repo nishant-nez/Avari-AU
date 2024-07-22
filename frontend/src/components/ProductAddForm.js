@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import { Toast } from "./Toast";
 import axios from "../api/axios";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const ProductAddForm = ({ productSchema, closeModal, fetchProducts, categories }) => {
     const [vendors, setVendors] = useState([]);
@@ -60,7 +60,7 @@ const ProductAddForm = ({ productSchema, closeModal, fetchProducts, categories }
         } catch (err) {
             Toast('error', err.response.data.message);
         }
-    }
+    };
 
     return (
         <form onSubmit={ formik.handleSubmit } className="px-8">

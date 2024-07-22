@@ -2,14 +2,18 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import axios from "../../api/axios";
 import { Toast } from "../../components/Toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 
 const VendorLogin = () => {
     const navigate = useNavigate();
-    const { login } = useContext(AuthContext);
+    const { authState, login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    if (authState.role === 'vendor') {
+        return <Navigate to='/admin/dashboard' replace />;
+    }
 
     const handleLogin = async () => {
         try {

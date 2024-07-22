@@ -7,7 +7,6 @@ import * as Yup from "yup";
 import ProductRow from "../../components/ProductRow";
 import ProductAddForm from "../../components/ProductAddForm";
 import ProductUpdateForm from "../../components/ProductUpdateForm";
-import { ProductContext } from "../../contexts/ProductContext";
 import { CategoryContext } from "../../contexts/CategoryContext";
 import DeleteCard from "../../components/DeleteCard";
 
@@ -51,7 +50,7 @@ Modal.setAppElement('#root');
 
 const Products = () => {
     const { categories } = useContext(CategoryContext);
-    const { products, fetchProducts } = useContext(ProductContext);
+    const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState({});
     const [selectedDelProduct, setSelectedDelProduct] = useState({});
 
@@ -59,6 +58,21 @@ const Products = () => {
     const handleDelete = (id) => {
         openDeleteModal(id);
     }
+
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get('/api/product/all', { withCredentials: true });
+            setProducts(response.data);
+            if (response.status === 200) setProducts(response.data);
+            else Toast('error', response.message);
+        } catch (err) {
+            Toast('error', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
 
     const handleDeleteProduct = async () => {
         try {
@@ -132,7 +146,7 @@ const Products = () => {
                 </div>
 
                 {/* table  */ }
-                <section className="h-screen container mx-auto p-6 font-mono">
+                <section className="min-h-screen container mx-auto p-6 font-mono">
                     <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full">

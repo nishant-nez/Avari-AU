@@ -5,22 +5,10 @@ import { FiTrash2 } from 'react-icons/fi';
 import CartItem from '../components/CartItem';
 import { SidebarContext } from '../contexts/SidebarContext';
 import { CartContext } from '../contexts/CartContext';
-import { MinimumOrderContext } from '../contexts/MinimumOrderContext';
-import { Toast } from '../components/Toast';
 
 const Sidebar = () => {
   const { isOpen, handleClose } = useContext(SidebarContext);
   const { cart, clearCart, total, itemAmount } = useContext(CartContext);
-
-  const { minOrder } = useContext(MinimumOrderContext);
-
-  const handleClick = () => {
-    if (total < minOrder.value) {
-      Toast('error', `Minimum order amount should be $ ${ minOrder.value }!`);
-    } else {
-      Toast('success', `Your order has been placed successfully!`);
-    }
-  };
 
   return (
     <div
@@ -37,7 +25,7 @@ const Sidebar = () => {
           <IoMdArrowForward className='text-2xl' />
         </div>
       </div>
-      <div className='flex flex-col gap-y-2 h-[520px] lg:h-[640px] overflow-y-auto overflow-x-hidden border-b'>
+      <div className='flex flex-col gap-y-2 h-[590px] lg:h-[690px] overflow-y-auto overflow-x-hidden border-b'>
         { cart.map((item) => {
           return <CartItem item={ item } key={ item.id } />
         }) }
@@ -57,17 +45,18 @@ const Sidebar = () => {
         </div>
 
         <Link
+          onClick={ handleClose }
           to={ '/cart' }
-          className='bg-gray-200 flex p-4 justify-center items-center text-primary w-full font-medium cursor-pointer'
+          className='bg-primary flex p-4 justify-center items-center text-white w-full font-medium cursor-pointer'
         >
           View Cart
         </Link>
-        <div
+        {/* <div
           onClick={ handleClick }
           className='bg-primary flex p-4 justify-center items-center text-white w-full font-medium cursor-pointer'
         >
           Checkout
-        </div>
+        </div> */}
         {/* <Link
           to={ '/' }
           className='bg-primary flex p-4 justify-center items-center text-white w-full font-medium cursor-pointer'

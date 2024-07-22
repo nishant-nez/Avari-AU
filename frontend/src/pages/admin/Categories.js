@@ -1,33 +1,18 @@
-import Navbar from "../../components/Navbar";
 import { useContext, useEffect, useState } from "react";
+import Navbar from "../../components/Navbar";
+import { CategoryContext } from "../../contexts/CategoryContext";
+import Modal from 'react-modal';
 import axios from "../../api/axios";
 import { Toast } from "../../components/Toast";
-import Modal from 'react-modal';
-import * as Yup from "yup";
-import { CategoryContext } from "../../contexts/CategoryContext";
+import CategoryRow from "../../components/CategoryRow";
+import CategoryAddForm from "../../components/CategoryAddForm";
 import DeleteCard from "../../components/DeleteCard";
-import ProductRowVendor from "../../components/ProductRowVendor";
-import ProductAddFormVendor from "../../components/ProductAddFormVendor";
-import ProductUpdateFormVendor from "../../components/ProductUpdateFormVendor";
-import { AuthContext } from "../../contexts/AuthContext";
-
-// formik
-const productSchema = Yup.object().shape({
-    name: Yup.string().required("Name is required"),
-    price: Yup.number().required("Price is required"),
-    unit: Yup.string().required("Unit is required"),
-    image: Yup.mixed().required("Image is required"),
-    description: Yup.string().required("Description is required"),
-    category_id: Yup.number().required("Category id is required"),
-});
+import CategoryUpdateForm from "../../components/CategoryUpdateForm";
 
 const columns = [
     { name: "ID" },
     { name: "Name" },
-    { name: "Description" },
-    { name: "Price" },
-    { name: "Unit" },
-    { name: "Category" },
+    { name: "Total Products" },
     { name: "Created At" },
     { name: "Action" },
 ];
@@ -41,24 +26,28 @@ const customStyles = {
         bottom: 'auto',
         marginRight: '-50%',
         transform: 'translate(-50%, -50%)',
-        width: '60%',
-        height: '85%',
+        width: '50%',
     },
 };
 
 Modal.setAppElement('#root');
 
-
-const VendorProducts = () => {
-    const { authState } = useContext(AuthContext);
-    const { categories } = useContext(CategoryContext);
+const Categories = () => {
+    const { categories, fetchCategories } = useContext(CategoryContext);
     const [products, setProducts] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState({});
-    const [selectedDelProduct, setSelectedDelProduct] = useState({});
+    const [selectedCategory, setSelectedCategory] = useState({});
+    const [selectedDelCategory, setSelectedDelCategory] = useState({});
+    const [totalProducts, setTotalProducts] = useState({});
+
+
+    const handleDelete = (id) => {
+        openDeleteModal(id);
+    };
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(`/api/product/vendor/${ authState.user.id }`, { withCredentials: true });
+            const response = await axios.get('/api/product/all', { withCredentials: true });
+            setProducts(response.data);
             if (response.status === 200) setProducts(response.data);
             else Toast('error', response.message);
         } catch (err) {
@@ -68,18 +57,23 @@ const VendorProducts = () => {
 
     useEffect(() => {
         fetchProducts();
-    }, [authState]);
+    }, []);
 
-    const handleDelete = (id) => {
-        openDeleteModal(id);
-    }
+    useEffect(() => {
+        const productCounts = {};
+        categories.forEach(category => {
+            productCounts[category.id] = products.filter(product => product.category.id === category.id).length;
+        });
+        setTotalProducts(productCounts);
+    }, [categories, products]);
 
-    const handleDeleteProduct = async () => {
+
+    const handleDeleteCategory = async () => {
         try {
-            const response = await axios.delete(`/api/product/delete/${ selectedDelProduct.id }`, { withCredentials: true });
+            const response = await axios.delete(`/api/category/delete/${ selectedDelCategory.id }`, { withCredentials: true });
             if (response.statusText === 'OK') {
-                Toast('success', 'Product Deleted Successfully');
-                fetchProducts();
+                Toast('success', 'Category Deleted Successfully');
+                fetchCategories();
                 closeDeleteModal();
             } else {
                 Toast('error', 'Something went wrong');
@@ -109,8 +103,8 @@ const VendorProducts = () => {
     const [updateModalIsOpen, setUpdateIsOpen] = useState(false);
 
     function openUpdateModal(id) {
-        const selProduct = products.find((product) => product.id === id);
-        setSelectedProduct(selProduct);
+        const selCategory = categories.find((category) => category.id === id);
+        setSelectedCategory(selCategory);
         setUpdateIsOpen(true);
     }
     function afterUpdateOpenModal() {
@@ -125,8 +119,8 @@ const VendorProducts = () => {
     const [deleteModalIsOpen, setDeleteIsOpen] = useState(false);
 
     function openDeleteModal(id) {
-        const delProduct = products.find((product) => product.id === id);
-        setSelectedDelProduct(delProduct);
+        const del = categories.find((category) => category.id === id);
+        setSelectedDelCategory(del);
         setDeleteIsOpen(true);
     }
     function closeDeleteModal() {
@@ -139,14 +133,14 @@ const VendorProducts = () => {
 
             <div className="w-full h-full flex flex-col items-center justify-center">
                 <div className="container mx-auto flex pt-36 justify-between items-center px-6">
-                    <h1 className="text-xl font-semibold">My Products</h1>
+                    <h1 className="text-xl font-semibold">Categories</h1>
                     <div className='bg-primary flex p-3 w-[150px] rounded-lg justify-center items-center text-white font-medium cursor-pointer' onClick={ openModal }>
-                        Add Product
+                        Add Category
                     </div>
                 </div>
 
                 {/* table  */ }
-                <section className="h-screen container mx-auto p-6 font-mono">
+                <section className="min-h-screen container mx-auto p-6 font-mono">
                     <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full">
@@ -158,9 +152,9 @@ const VendorProducts = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white">
-                                    { products && products.map((product) => {
+                                    { categories.map((category) => {
                                         return (
-                                            <ProductRowVendor product={ product } openUpdateModal={ openUpdateModal } handleDelete={ handleDelete } key={ product.id } />
+                                            <CategoryRow category={ category } totalProducts={ totalProducts[category.id] || 0 } openUpdateModal={ openUpdateModal } handleDelete={ handleDelete } key={ category.id } />
                                         );
                                     }) }
 
@@ -176,11 +170,11 @@ const VendorProducts = () => {
                     onAfterOpen={ afterOpenModal }
                     onRequestClose={ closeModal }
                     style={ customStyles }
-                    contentLabel="Add Product Modal"
+                    contentLabel="Add Category Modal"
                 >
                     <button onClick={ closeModal } className="text-right w-full pr-8">X</button>
-                    <h2 ref={ (_subtitle) => (subtitle = _subtitle) } className="text-center w-full">Add Product</h2>
-                    <ProductAddFormVendor productSchema={ productSchema } closeModal={ closeModal } fetchProducts={ fetchProducts } categories={ categories } />
+                    <h2 ref={ (_subtitle) => (subtitle = _subtitle) } className="text-center w-full">Add Category</h2>
+                    <CategoryAddForm closeModal={ closeModal } />
                 </Modal>
 
                 {/* update modal */ }
@@ -192,16 +186,17 @@ const VendorProducts = () => {
                     contentLabel="Update Product Modal"
                 >
                     <button onClick={ closeUpdateModal } className="text-right w-full pr-8">X</button>
-                    <h2 ref={ (_subtitle) => (updateSubtitle = _subtitle) } className="text-center w-full">Update Product</h2>
+                    <h2 ref={ (_subtitle) => (updateSubtitle = _subtitle) } className="text-center w-full">Update Category</h2>
 
-                    <ProductUpdateFormVendor closeModal={ closeUpdateModal } productSchema={ productSchema } fetchProducts={ fetchProducts } product={ selectedProduct } categories={ categories } />
+                    <CategoryUpdateForm closeModal={ closeUpdateModal } fetchCategories={ fetchCategories } category={ selectedCategory } />
                 </Modal>
 
                 {/* delete modal */ }
-                <DeleteCard handleDelete={ handleDeleteProduct } name={ 'Product' } deleteModalIsOpen={ deleteModalIsOpen } closeDeleteModal={ closeDeleteModal } />
+                <DeleteCard handleDelete={ handleDeleteCategory } name={ 'Category' } deleteModalIsOpen={ deleteModalIsOpen } closeDeleteModal={ closeDeleteModal } />
             </div>
+
         </>
     );
 }
 
-export default VendorProducts;
+export default Categories;
