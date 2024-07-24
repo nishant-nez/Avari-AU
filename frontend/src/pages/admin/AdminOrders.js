@@ -101,7 +101,7 @@ const AdminOrders = () => {
                 </div>
 
                 {/* table  */ }
-                <section className="h-screen container mx-auto p-6 font-mono">
+                <section className="min-h-screen container mx-auto p-6 font-mono">
                     <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                         <div className="w-full overflow-x-auto">
                             <table className="w-full">

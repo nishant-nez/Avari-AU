@@ -15,7 +15,6 @@ const vendorLinks = [
     { title: 'Home', link: '/vendor/dashboard' },
     { title: 'Products', link: '/vendor/products' },
     { title: 'Orders', link: '/vendor/orders' },
-    { title: 'Others', link: '#' },
 ];
 
 const Navbar = () => {

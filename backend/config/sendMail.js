@@ -109,8 +109,8 @@ const sendMail = (data, callback) => {
     const adminMailOptions = {
         from: `Avari <${ process.env.EMAIL_USERNAME }>`,
         to: process.env.ADMIN_EMAIL,
-        subject: 'New Order Placed for admin',
-        html: generateTable(data)
+        subject: 'New Order Placed',
+        html: '<p>Admin,</p><br/>' + generateTable(data)
     };
 
     transporter.sendMail(adminMailOptions, (error, info) => {
@@ -127,8 +127,8 @@ const sendMail = (data, callback) => {
     const customerMailOptions = {
         from: `Avari <${ process.env.EMAIL_USERNAME }>`,
         to: data.email,
-        subject: 'New Order Placed for' + 'customer',
-        html: generateTable(data)
+        subject: 'New Order Placed',
+        html: `<p>Dear ${ data.name },</p><br/>` + generateTable(data)
     };
 
     transporter.sendMail(customerMailOptions, (error, info) => {
@@ -164,8 +164,8 @@ const sendMail = (data, callback) => {
             // development
             // to: vendorData.email,
             to: process.env.ADMIN_EMAIL,
-            subject: 'New Order Placed for ' + vendorData.email,
-            html: vendorOrderContent
+            subject: 'New Order Placed From Your Store',
+            html: `<p>Dear ${ vendorData.name },</p><br/>` + vendorOrderContent
         };
 
         transporter.sendMail(vendorMailOptions, (error, info) => {
