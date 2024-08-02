@@ -141,7 +141,14 @@ const webhookControl = async (req, res) => {
                                         (error, results) => {
                                             if (error) return reject(error);
 
-                                            resolve();
+                                            pool.query(
+                                                queries.reduceStock,
+                                                [quantity, product_id],
+                                                (error, results) => {
+                                                    if (error) return reject(error);
+                                                    resolve();
+                                                }
+                                            );
                                         }
                                     );
                                 }

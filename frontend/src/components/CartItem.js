@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { IoMdAdd, IoMdClose, IoMdRemove } from 'react-icons/io';
 import { CartContext } from '../contexts/CartContext';
+import { Toast } from './Toast';
 
 const CartItem = ({ item }) => {
   const { removeFromCart, increaseAmount, decreaseAmount } = useContext(CartContext);
@@ -43,7 +44,13 @@ const CartItem = ({ item }) => {
                 { amount }
               </div>
               <div
-                onClick={ () => increaseAmount(id) }
+                onClick={ () => {
+                  if (item.stock !== item.amount) {
+                    increaseAmount(item.id)
+                  } else {
+                    Toast('error', `Stock amount is only ${ item.stock }`);
+                  }
+                } }
                 className='flex-1 h-full flex justify-center items-center cursor-pointer'
               >
                 <IoMdAdd />

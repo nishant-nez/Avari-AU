@@ -15,6 +15,7 @@ const ProductAddFormVendor = ({ productSchema, closeModal, fetchProducts, catego
             image: null,
             description: '',
             category_id: '',
+            stock: ''
         },
         validationSchema: productSchema,
         onSubmit: values => {
@@ -72,6 +73,18 @@ const ProductAddFormVendor = ({ productSchema, closeModal, fetchProducts, catego
                     onChange={ formik.handleChange }
                     onBlur={ formik.handleBlur }
                     value={ formik.values.price }
+                />
+            </div>
+            <div className="mb-5">
+                <label htmlFor="stock" className="block mb-2 text-sm font-medium text-gray-900">Stock</label>
+                <input
+                    type="number" id="stock"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                    placeholder="Stock"
+                    required
+                    onChange={ formik.handleChange }
+                    onBlur={ formik.handleBlur }
+                    value={ formik.values.stock }
                 />
             </div>
             <div className="mb-5">

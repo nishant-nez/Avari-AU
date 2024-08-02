@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { CartContext } from "../contexts/CartContext";
+import { Toast } from "./Toast";
 
 const CartCard = ({ item }) => {
     const { decreaseAmount, increaseAmount, removeFromCart } = useContext(CartContext);
@@ -25,7 +26,13 @@ const CartCard = ({ item }) => {
                         </span>
                         <input className="h-8 w-8 border bg-white text-center text-xs outline-none" type="number" value={ item.amount } min="1" />
                         <span
-                            onClick={ () => increaseAmount(item.id) }
+                            onClick={ () => {
+                                if (item.stock !== item.amount) {
+                                    increaseAmount(item.id)
+                                } else {
+                                    Toast('error', `Stock amount is only ${ item.stock }`);
+                                }
+                            } }
                             className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50"
                         >
                             +

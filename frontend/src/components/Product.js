@@ -2,10 +2,11 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { BsPlus, BsEyeFill } from 'react-icons/bs';
 import { CartContext } from '../contexts/CartContext';
+import { Toast } from './Toast';
 
 const Product = ({ product }) => {
   const { addToCart } = useContext(CartContext);
-  const { id, name, price, unit, image, description, vendor, category } = product;
+  const { id, name, price, unit, image, description, vendor, category, stock } = product;
 
   return (
     <div>
@@ -22,7 +23,13 @@ const Product = ({ product }) => {
         </div>
         {/* buttons */ }
         <div className='absolute top-6 -right-11 group-hover:right-5 p-2 flex flex-col items-center justify-center gap-y-2 opacity-0 group-hover:opacity-100 transition-all duration-300'>
-          <button onClick={ () => addToCart(product, id) }>
+          <button onClick={ () => {
+            if (product.stock !== 0) {
+              addToCart(product, id)
+            } else {
+              Toast('error', 'Item out of stock!');
+            }
+          } }>
             <div className='flex justify-center items-center text-white w-12 h-12 bg-red-500'>
               <BsPlus className='text-3xl' />
             </div>
@@ -37,8 +44,9 @@ const Product = ({ product }) => {
         <div className='text-sm capitalize text-gray-500 mb-1'>
           { category.name }
         </div>
-        <Link to={ `/product/${ id }` }>
+        <Link to={ `/product/${ id }` } className='flex justify-between items-center'>
           <h2 className='font-semibold mb-1'>{ name }</h2>
+          <h2 className='mb-1'> Stock: <span className='font-semibold'> { stock } </span></h2>
         </Link>
         <div className='font-semibold'>$ { price }</div>
       </div>

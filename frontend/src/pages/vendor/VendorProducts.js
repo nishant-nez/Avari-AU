@@ -24,9 +24,10 @@ const productSchema = Yup.object().shape({
 const columns = [
     { name: "ID", style: "py-3 px-5 text-left border border-b rounded-tl-lg md:rounded-none" },
     { name: "Name", style: "my-3 py-[0.80rem] px-6 text-left lg:border lg:border-b" },
-    { name: "Description", style: "py-3 px-5 text-left border border-b" },
     { name: "Price", style: "py-3 px-5 text-left border border-b" },
+    { name: "Stock", style: "py-3 px-5 text-left border border-b" },
     { name: "Unit", style: "py-3 px-5 text-left border border-b" },
+    { name: "Description", style: "py-3 px-5 text-left border border-b" },
     { name: "Category", style: "py-3 px-5 text-left border border-b" },
     { name: "Created At", style: "py-3 px-5 text-left border border-b" },
     { name: "Action", style: "my-3 py-[0.52rem] px-6 text-left lg:border lg:border-b" },

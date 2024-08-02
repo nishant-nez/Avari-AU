@@ -34,6 +34,7 @@ SELECT
     p.description,
     p.created_at,
     p.updated_at,
+    s.quantity as stock,
     json_build_object(
         'id', c.id,
         'name', c.name
@@ -51,6 +52,8 @@ SELECT
     ) AS vendor
 FROM 
     products p
+JOIN
+    stocks s ON p.id = s.product_id
 JOIN 
     categories c ON p.category_id = c.id
 JOIN 
@@ -66,6 +69,7 @@ SELECT
     p.description,
     p.created_at,
     p.updated_at,
+    s.quantity as stock,
     json_build_object(
         'id', c.id,
         'name', c.name
@@ -83,6 +87,8 @@ SELECT
     ) AS vendor
 FROM 
     products p
+JOIN
+    stocks s ON p.id = s.product_id
 JOIN 
     categories c ON p.category_id = c.id
 JOIN 
@@ -99,6 +105,7 @@ SELECT
     p.description,
     p.created_at,
     p.updated_at,
+    s.quantity as stock,
     json_build_object(
         'id', c.id,
         'name', c.name
@@ -116,6 +123,8 @@ SELECT
     ) AS vendor
 FROM 
     products p
+JOIN
+    stocks s ON p.id = s.product_id
 JOIN 
     categories c ON p.category_id = c.id
 JOIN 
@@ -132,6 +141,7 @@ SELECT
     p.description,
     p.created_at,
     p.updated_at,
+    s.quantity as stock,
     json_build_object(
         'id', c.id,
         'name', c.name
@@ -149,6 +159,8 @@ SELECT
     ) AS vendor
 FROM 
     products p
+JOIN
+    stocks s ON p.id = s.product_id
 JOIN 
     categories c ON p.category_id = c.id
 JOIN 
@@ -156,7 +168,7 @@ JOIN
 WHERE v.id = $1;
 `;
 const getProductByPriceName = "SELECT id, vendor_id FROM products WHERE price = $1 AND name = $2";
-const addProduct = "INSERT INTO products (name, category_id, price, unit, image, description, vendor_id) VALUES ($1, $2, $3, $4, $5, $6, $7)";
+const addProduct = "INSERT INTO products (name, category_id, price, unit, image, description, vendor_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id";
 const updateProduct = "UPDATE products SET name = $1, category_id = $2, price = $3, unit = $4, description = $5, vendor_id = $6 WHERE id = $7";
 const updateProductImage = "UPDATE products SET image = $1 WHERE id = $2"
 const deleteProduct = "DELETE FROM products WHERE id = $1";
@@ -293,6 +305,16 @@ const getOrderItemsByVendorId = "SELECT * FROM order_items WHERE vendor_id = $1"
 const getOrderItemsByProductId = "SELECT * FROM order_items WHERE product_id = $1";
 const addOrderItem = "INSERT INTO order_items (order_id, product_id, quantity) VALUES ($1, $2, $3)";
 
+// stocks
+const getStocks = "SELECT * FROM stocks";
+const getStockById = "SELECT * FROM stocks WHERE id = $1";
+const getStockByProductId = "SELECT * FROM stocks WHERE product_id = $1";
+const addStock = "INSERT INTO stocks (product_id, quantity) VALUES ($1, $2)";
+const updateStock = "UPDATE stocks SET quantity = $1 WHERE product_id = $2";
+const reduceStock = "UPDATE stocks SET quantity = quantity - $1 WHERE product_id = $2";
+const increaseStock = "UPDATE stocks SET quantity = quantity + $1 WHERE product_id = $2";
+const deleteStock = "DELETE FROM stocks WHERE id = $1";
+
 
 module.exports = {
     // vendors
@@ -343,4 +365,13 @@ module.exports = {
     getOrderItemsByVendorId,
     getOrderItemsByProductId,
     addOrderItem,
+    // stocks
+    getStocks,
+    getStockById,
+    getStockByProductId,
+    addStock,
+    updateStock,
+    reduceStock,
+    increaseStock,
+    deleteStock,
 }

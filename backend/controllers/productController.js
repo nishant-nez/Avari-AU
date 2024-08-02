@@ -12,7 +12,7 @@ const handleServerError = (res, error, message) => {
 
 //@desc Get All Products 
 //@route GET /api/product/all
-//@access private
+//@access public
 const getProducts = (req, res) => {
     try {
         pool.query(queries.getProducts, (error, results) => {
@@ -27,7 +27,7 @@ const getProducts = (req, res) => {
 
 //@desc Get Product by ID 
 //@route GET /api/product/:id
-//@access private
+//@access public
 const getProduct = (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -45,7 +45,7 @@ const getProduct = (req, res) => {
 
 //@desc Get Product by Category ID 
 //@route GET /api/product/category/:id
-//@access private
+//@access public
 const getProductsByCategory = (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -61,9 +61,9 @@ const getProductsByCategory = (req, res) => {
     }
 }
 
-//@desc Get Product by Category ID 
+//@desc Get Product by Vendor ID 
 //@route GET /api/product/vendor/:id
-//@access private
+//@access public
 const getProductsByVendor = (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -84,8 +84,8 @@ const getProductsByVendor = (req, res) => {
 //@access private
 const addProduct = async (req, res) => {
     // return res.status(200).json({ body: req.body, file: req.file })
-    const { name, category_id, price, description, unit, vendor_id } = req.body;
-    if (!name || !category_id || !price || !description || !unit || !vendor_id) {
+    const { name, category_id, price, description, unit, vendor_id, stock } = req.body;
+    if (!name || !category_id || !price || !description || !unit || !vendor_id || !stock) {
         return res.status(400).json({ message: "Please fill mandatory all fields!" });
     }
     if (!req.file) {
@@ -96,7 +96,12 @@ const addProduct = async (req, res) => {
     try {
         pool.query(queries.addProduct, [name, category_id, price, unit, imagePath, description, vendor_id], (error, results) => {
             if (error) return handleServerError(res, error, 'Error adding product!');
-            res.status(201).json({ message: "Product added successfully!" });
+            const product_id = results.rows[0].id;
+
+            pool.query(queries.addStock, [product_id, stock], (error, results) => {
+                if (error) return handleServerError(res, error, 'Error adding stock!');
+                res.status(201).json({ message: "Product added successfully!" });
+            });
         });
     } catch (error) {
         console.error('Error adding product:', error);
@@ -108,7 +113,7 @@ const addProduct = async (req, res) => {
 //@route PUT /api/product/update/:id
 //@access private
 const updateProduct = async (req, res) => {
-    const { name, category_id, price, description, unit, vendor_id } = req.body;
+    const { name, category_id, price, description, unit, vendor_id, stock } = req.body;
     try {
         const id = parseInt(req.params.id);
         if (!id) {
@@ -124,9 +129,12 @@ const updateProduct = async (req, res) => {
                         console.error('Error querying product by ID:', error);
                         return res.status(500).json({ message: "Internal server error" });
                     }
-                    return res.status(201).json({ message: "Product updated successfully!" });
-                });
 
+                    pool.query(queries.updateStock, [stock, id], (error, results) => {
+                        if (error) return handleServerError(res, error, 'Error updating stock!');
+                        return res.status(201).json({ message: "Product updated successfully!" });
+                    });
+                });
             }
         });
     } catch (error) {

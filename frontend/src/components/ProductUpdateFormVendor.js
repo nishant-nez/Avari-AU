@@ -16,6 +16,7 @@ const ProductUpdateFormVendor = ({ closeModal, productSchema, fetchProducts, pro
             description: '',
             category_id: '',
             vendor_id: '',
+            stock: '',
         },
         // validationSchema: productSchema,
         onSubmit: values => {
@@ -31,6 +32,7 @@ const ProductUpdateFormVendor = ({ closeModal, productSchema, fetchProducts, pro
                 unit: product.unit || '',
                 description: product.description || '',
                 category_id: product.category_id || '',
+                stock: product.stock || 0,
             });
         }
     }, [product]);
@@ -76,6 +78,18 @@ const ProductUpdateFormVendor = ({ closeModal, productSchema, fetchProducts, pro
                     onChange={ formik.handleChange }
                     onBlur={ formik.handleBlur }
                     value={ formik.values.price }
+                />
+            </div>
+            <div className="mb-5">
+                <label htmlFor="stock" className="block mb-2 text-sm font-medium text-gray-900">Stock</label>
+                <input
+                    type="number" id="stock"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5"
+                    placeholder="Stock"
+                    required
+                    onChange={ formik.handleChange }
+                    onBlur={ formik.handleBlur }
+                    value={ formik.values.stock }
                 />
             </div>
             <div className="mb-5">
