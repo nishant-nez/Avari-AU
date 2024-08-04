@@ -107,7 +107,8 @@ const LocationProvider = ({ children }) => {
     useEffect(() => {
         if (location) {
             // development
-            filterVendors({ lat: -25.589270, lng: 151.299039 });
+            process.env.NODE_ENV === 'production' ? filterVendors({ lat: -25.589270, lng: 151.299039 }) : filterVendors(location);
+            // filterVendors({ lat: -25.589270, lng: 151.299039 });
             // filterVendors(location);
         }
     }, [location]);

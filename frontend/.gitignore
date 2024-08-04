@@ -7,7 +7,6 @@ scripts/flow/*/.flowconfig
 .grunt
 _SpecRunner.html
 __benchmarks__
-build/
 remote-repo/
 coverage/
 .module-cache
@@ -46,8 +45,6 @@ packages/react-devtools-timeline/dist# See https://help.github.com/articles/igno
 # testing
 /coverage
 
-# production
-/build
 
 # misc
 .DS_Store
