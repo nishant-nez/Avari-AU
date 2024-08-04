@@ -163,7 +163,8 @@ const sendMail = (data, callback) => {
             from: `Avari <${ process.env.EMAIL_USERNAME }>`,
             // development
             // to: vendorData.email,
-            to: process.env.ADMIN_EMAIL,
+            // to: process.env.ADMIN_EMAIL,
+            to: process.env.NODE_ENV === 'production' ? process.env.ADMIN_EMAIL : vendorData.email,
             subject: 'New Order Placed From Your Store',
             html: `<p>Dear ${ vendorData.name },</p><br/>` + vendorOrderContent
         };
