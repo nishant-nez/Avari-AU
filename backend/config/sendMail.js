@@ -2,9 +2,8 @@ const nodemailer = require('nodemailer');
 
 const signature = `
 <p>
-    <b>Avari</b><br>
-    1234 Main Street<br>
-    Anytown, CA 12345<br>
+    <b>Gromi</b><br>
+    Australia<br>
 </p>
 `
 
@@ -107,7 +106,7 @@ const sendMail = (data, callback) => {
 
     // Send to admin
     const adminMailOptions = {
-        from: `Avari <${ process.env.EMAIL_USERNAME }>`,
+        from: `Gromi <${ process.env.EMAIL_ALIAS }>`,
         to: process.env.ADMIN_EMAIL,
         subject: 'New Order Placed',
         html: '<p>Admin,</p><br/>' + generateTable(data)
@@ -125,7 +124,7 @@ const sendMail = (data, callback) => {
 
     // send to customer
     const customerMailOptions = {
-        from: `Avari <${ process.env.EMAIL_USERNAME }>`,
+        from: `Gromi <${ process.env.EMAIL_ALIAS }>`,
         to: data.email,
         subject: 'New Order Placed',
         html: `<p>Dear ${ data.name },</p><br/>` + generateTable(data)
@@ -160,7 +159,7 @@ const sendMail = (data, callback) => {
         const vendorOrderContent = generateVendorTable(vendorData.order, Number(vendorId));
 
         const vendorMailOptions = {
-            from: `Avari <${ process.env.EMAIL_USERNAME }>`,
+            from: `Gromi <${ process.env.EMAIL_ALIAS }>`,
             // development
             // to: vendorData.email,
             // to: process.env.ADMIN_EMAIL,

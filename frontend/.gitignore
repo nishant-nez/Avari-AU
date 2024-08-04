@@ -45,6 +45,8 @@ packages/react-devtools-timeline/dist# See https://help.github.com/articles/igno
 # testing
 /coverage
 
+# production
+/build
 
 # misc
 .DS_Store

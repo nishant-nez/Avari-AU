@@ -22,7 +22,7 @@ const Header = () => {
       <div className='container mx-auto flex items-center justify-between h-full'>
         <Link to={ '/' }>
           <div>
-            <img className='w-[80px]' src={ Logo } alt="logo" />
+            <img className='w-[130px] my-2' src={ Logo } alt="logo" />
           </div>
         </Link>
         <div

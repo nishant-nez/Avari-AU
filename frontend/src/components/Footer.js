@@ -6,7 +6,7 @@ const Footer = () => {
     <div className=" bg-primary">
       <div className="max-w-2xl mx-auto text-white py-10">
         <div className="text-center">
-          <h3 className="text-3xl mb-3"> Avari Australia </h3>
+          <h3 className="text-3xl mb-3"> Gromi Australia </h3>
           <p> Get it delivered. </p>
           <div className="flex justify-center my-10">
             <div className="flex items-center w-auto rounded-lg px-4 py-2 gap-4 mx-2">
