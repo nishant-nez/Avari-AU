@@ -51,9 +51,7 @@ const getProductsByCategory = (req, res) => {
         const id = parseInt(req.params.id);
         pool.query(queries.getProductsByCategory, [id], (error, results) => {
             if (error) return handleServerError(res, error, 'Error getting products!');
-            if (results.rows.length) {
-                res.status(200).json(results.rows[0]);
-            } else res.status(404).json({ message: "Product not found!" });
+            res.status(200).json(results.rows);
         });
     } catch (error) {
         console.error('Error getting product:', error);
@@ -69,9 +67,7 @@ const getProductsByVendor = (req, res) => {
         const id = parseInt(req.params.id);
         pool.query(queries.getProductsByVendor, [id], (error, results) => {
             if (error) return handleServerError(res, error, 'Error getting products!');
-            if (results.rows.length) {
-                res.status(200).json(results.rows);
-            } else res.status(404).json({ message: "Product not found!" });
+            res.status(200).json(results.rows);
         });
     } catch (error) {
         console.error('Error getting product:', error);
