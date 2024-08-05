@@ -10,7 +10,8 @@ const ProductAddForm = ({ productSchema, closeModal, fetchProducts, categories }
         const fetchVendors = async () => {
             try {
                 const response = await axios.get('/api/vendor/all', { withCredentials: true });
-                if (response.statusText === 'OK') {
+                console.log('response')
+                if (response.status === 200) {
                     setVendors(response.data);
                 }
             } catch (err) {

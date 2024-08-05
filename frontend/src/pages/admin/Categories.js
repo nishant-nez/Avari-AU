@@ -71,7 +71,7 @@ const Categories = () => {
     const handleDeleteCategory = async () => {
         try {
             const response = await axios.delete(`/api/category/delete/${ selectedDelCategory.id }`, { withCredentials: true });
-            if (response.statusText === 'OK') {
+            if (response.status === 200) {
                 Toast('success', 'Category Deleted Successfully');
                 fetchCategories();
                 closeDeleteModal();

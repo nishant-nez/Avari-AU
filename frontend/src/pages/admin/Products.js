@@ -78,7 +78,7 @@ const Products = () => {
     const handleDeleteProduct = async () => {
         try {
             const response = await axios.delete(`/api/product/delete/${ selectedDelProduct.id }`, { withCredentials: true });
-            if (response.statusText === 'OK') {
+            if (response.status === 200) {
                 Toast('success', 'Product Deleted Successfully');
                 fetchProducts();
                 closeDeleteModal();

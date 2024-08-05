@@ -45,7 +45,7 @@ const AdminOrders = () => {
     const fetchOrders = async () => {
         try {
             const response = await axios.get('/api/order/all', { withCredentials: true });
-            if (response.statusText === 'OK') {
+            if (response.status === 200) {
                 setOrders(response.data);
             }
         } catch (err) {
