@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Header from '../components/Header';
 import { Link } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
@@ -10,6 +10,22 @@ import axios from '../api/axios';
 const Cart = () => {
     const { cart, total } = useContext(CartContext);
     const { minOrder } = useContext(MinimumOrderContext);
+    const [deliveryFee, setDeliveryFee] = useState(0);
+
+    const fetchDeliveryFee = async () => {
+        try {
+            const response = await axios.get('/api/default/deliveryfee', { withCredentials: true });
+            if (response.status === 200) {
+                setDeliveryFee(response.data.delivery_fee);
+            }
+        } catch (err) {
+            Toast('error', err.response.data.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchDeliveryFee();
+    }, []);
 
     const handleClick = async () => {
         if (total < minOrder.minimum_order) {
@@ -56,14 +72,14 @@ const Cart = () => {
                         </div>
                         <div className="flex justify-between">
                             <p className="text-gray-700">Shipping</p>
-                            <p className="text-gray-700">$20.00</p>
+                            <p className="text-gray-700">${ deliveryFee }</p>
                         </div>
                         <hr className="my-4" />
                         <div className="flex justify-between">
                             <p className="text-lg font-bold">Total</p>
                             <div className="">
                                 {/* add dynamic shipping fee */ }
-                                <p className="mb-1 text-lg font-bold">${ parseFloat(total + 20.00).toFixed(2) } USD</p>
+                                <p className="mb-1 text-lg font-bold">${ parseFloat(total + parseFloat(deliveryFee)).toFixed(2) } USD</p>
                                 <p className="text-sm text-gray-700">including VAT</p>
                             </div>
                         </div>

@@ -11,6 +11,8 @@ const stripe = require('stripe')(process.env.STRIPE_KEY);
 //@route POST /api/checkout/create-checkout-session
 //@access public
 const createCheckout = async (req, res) => {
+    const { rows } = await pool.query(queries.getDeliveryFee);
+    const deliveryFee = rows[0].delivery_fee;
     const line_items = req.body.cart.map((item) => {
         const imageUrl = `${ process.env.BACKEND_URL }/${ item.image }`;
         return {
@@ -43,7 +45,7 @@ const createCheckout = async (req, res) => {
                 shipping_rate_data: {
                     type: 'fixed_amount',
                     fixed_amount: {
-                        amount: 2000,
+                        amount: (deliveryFee * 100) || 1000,
                         currency: 'usd',
                     },
                     display_name: 'Standard shipping',

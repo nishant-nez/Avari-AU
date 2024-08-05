@@ -5,6 +5,7 @@ import { Toast } from "../../components/Toast";
 
 const AdminDashboard = () => {
     const [minOrder, setMinOrder] = useState('');
+    const [deliveryFee, setDeliveryFee] = useState('');
 
     const fetchMinOrder = async () => {
         try {
@@ -14,6 +15,18 @@ const AdminDashboard = () => {
             }
         } catch (err) {
             console.log('minorder err', err);
+            Toast('error', err.response.data.message);
+        }
+    };
+
+    const fetchDeliveryFee = async () => {
+        try {
+            const response = await axios.get('/api/default/deliveryfee', { withCredentials: true });
+            if (response.status === 200) {
+                setDeliveryFee(response.data.delivery_fee);
+            }
+        } catch (err) {
+            console.log('delivery err', err);
             Toast('error', err.response.data.message);
         }
     };
@@ -32,10 +45,27 @@ const AdminDashboard = () => {
             console.log('minorder err', err);
             Toast('error', err.response.data.message);
         }
-    }
+    };
+
+    const handleDeliveryFeeUpdate = async () => {
+        try {
+            const response = await axios.put(
+                '/api/default/deliveryfee/update',
+                { value: deliveryFee },
+                { withCredentials: true }
+            );
+            if (response.status === 201) {
+                Toast('success', 'Delivery Fee updated successfully!')
+            }
+        } catch (err) {
+            console.log('delivery err', err);
+            Toast('error', err.response.data.message);
+        }
+    };
 
     useEffect(() => {
         fetchMinOrder();
+        fetchDeliveryFee();
     }, []);
 
     return (
@@ -62,6 +92,27 @@ const AdminDashboard = () => {
                         <button
                             className="block text-center text-white bg-gray-800 px-3 duration-300 rounded-lg hover:bg-black" type="submit"
                             onClick={ handleUpdate }
+                        >
+                            Update
+                        </button>
+                    </div>
+                </div>
+
+                <div className="my-8 text-sm mx-10 flex flex-col justify-start items-center gap-6">
+                    <label htmlFor="password" className="block text-black text-left">Delivery Fee Value ($)</label>
+                    <div className="flex gap-6">
+                        <input
+                            type="number"
+                            id="minorder"
+                            className="rounded-sm px-4 py-3 focus:outline-none bg-gray-100 w-full"
+                            placeholder="Delivery Fee"
+                            value={ deliveryFee }
+                            required
+                            onChange={ (e) => setDeliveryFee(e.target.value) }
+                        />
+                        <button
+                            className="block text-center text-white bg-gray-800 px-3 duration-300 rounded-lg hover:bg-black" type="submit"
+                            onClick={ handleDeliveryFeeUpdate }
                         >
                             Update
                         </button>

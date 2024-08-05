@@ -176,6 +176,8 @@ const deleteProduct = "DELETE FROM products WHERE id = $1";
 // default_values
 const getMinimumOrder = "SELECT * FROM default_values LIMIT 1";
 const updateMinimumOrder = "UPDATE default_values SET minimum_order = $1"
+const getDeliveryFee = "SELECT * FROM default_values LIMIT 1";
+const updateDeliveryFee = "UPDATE default_values SET delivery_fee = $1"
 
 // orders
 const getOrders = `
@@ -352,6 +354,9 @@ module.exports = {
     // minimum_order
     getMinimumOrder,
     updateMinimumOrder,
+    // delivery_fee
+    getDeliveryFee,
+    updateDeliveryFee,
     // orders
     getOrders,
     getOrderById,
