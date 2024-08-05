@@ -58,7 +58,8 @@ const Vendors = () => {
     const fetchVendors = async () => {
         try {
             const response = await axios.get('/api/vendor/all', { withCredentials: true });
-            if (response.statusText === 'OK') {
+            console.log('response', response)
+            if (response.status === 200) {
                 setVendors(response.data);
             }
         } catch (err) {
