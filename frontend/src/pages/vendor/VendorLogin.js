@@ -10,21 +10,25 @@ const VendorLogin = () => {
     const { authState, login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     if (authState.role === 'vendor') {
-        return <Navigate to='/admin/dashboard' replace />;
+        return <Navigate to='/vendor/dashboard' replace />;
     }
 
     const handleLogin = async () => {
+        setIsLoading(true);
         try {
             const response = await axios.post('/api/vendor/login', { email, password }, { withCredentials: true });
             if (response.status === 200) {
                 login(response.data.user);
                 Toast('success', response.data.message);
+                setIsLoading(false);
                 navigate('/vendor/dashboard');
             }
         } catch (err) {
             Toast('error', err.response.data.message)
+            setIsLoading(false);
         }
     }
 
@@ -66,7 +70,8 @@ const VendorLogin = () => {
                             </div>
 
                             <button
-                                className="block text-center text-white bg-gray-800 p-3 duration-300 rounded-sm hover:bg-black w-full"
+                                className={ `block text-center text-white bg-gray-800 p-3 duration-300 rounded-sm hover:bg-black w-full ${ isLoading ? 'cursor-wait' : '' }` }
+                                disabled={ isLoading }
                                 type="submit"
                                 onClick={ handleLogin }
                             >

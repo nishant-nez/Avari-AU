@@ -13,21 +13,25 @@ const AdminLogin = () => {
     const { authState, login } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     if (authState.role === 'admin') {
         return <Navigate to='/admin/dashboard' replace />;
     }
 
     const handleLogin = async () => {
+        setIsLoading(true);
         try {
             const response = await axios.post('/api/admin/login', { username, password }, { withCredentials: true });
             if (response.status === 200) {
                 login(response.data.user);
                 Toast('success', response.data.message);
+                setIsLoading(false);
                 navigate(from, { replace: true });
             }
         } catch (err) {
             Toast('error', err.response.data.message)
+            setIsLoading(false);
         }
     }
 
@@ -68,7 +72,9 @@ const AdminLogin = () => {
                             </div>
 
                             <button
-                                className="block text-center text-white bg-gray-800 p-3 duration-300 rounded-sm hover:bg-black w-full" type="submit"
+                                className={ `block text-center text-white bg-gray-800 p-3 duration-300 rounded-sm hover:bg-black w-full ${ isLoading ? 'cursor-wait' : '' }` }
+                                disabled={ isLoading }
+                                type="submit"
                                 onClick={ handleLogin }
                             >
                                 Login
