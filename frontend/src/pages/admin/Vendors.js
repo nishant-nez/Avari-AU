@@ -138,7 +138,7 @@ const Vendors = () => {
         <>
             <Navbar />
             <div className="w-full h-full flex flex-col items-center justify-center">
-                <div className="container mx-auto flex pt-36 justify-between items-center px-4">
+                <div className="container mx-auto flex pt-36 justify-between items-center px-6">
                     <h1 className="text-xl font-semibold">Vendors</h1>
                     <div className='bg-primary flex p-3 w-[150px] rounded-lg justify-center items-center text-white font-medium cursor-pointer' onClick={ openModal }>
                         Add Vendor
@@ -146,7 +146,7 @@ const Vendors = () => {
                 </div>
 
                 {/* table  */ }
-                <section className="min-h-screen container mx-auto py-6 font-mono">
+                <section className="min-h-screen container mx-auto p-6 font-mono">
                     <div className="w-full mb-8 overflow-hidden rounded-lg">
                         <div className="w-full overflow-x-auto">
                             <table className="lg:inline-table w-full flex flex-row justify-center overflow-hidden">

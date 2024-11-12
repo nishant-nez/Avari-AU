@@ -29,7 +29,7 @@ const MapSelector = ({ selectedCoordinates, handlePickLocation, setSelectedCoord
         <>
             <div style={ { height: '83%', width: '100%' } }>
                 <GoogleMapReact
-                    bootstrapURLKeys={ { key: "AIzaSyAlzfjyKzPlfIG_DPvpZNzre3jvRSXIl6o" } }
+                    bootstrapURLKeys={ { key: process.env.REACT_APP_GOOGLE_API_KEY } }
                     center={ mapCenter }
                     zoom={ zoom }
                     yesIWantToUseGoogleMapApiInternals={ true }
